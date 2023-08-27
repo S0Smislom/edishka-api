@@ -1,0 +1,14 @@
+version: '3'
+services:
+  food-db:
+    container_name: food-db
+    image: postgres:14-alpine
+    restart: on-failure
+    ports:
+      - '127.0.0.1:5434:5432'
+    environment:
+      - POSTGRES_DB=posgres
+      - POSTGRES_USER=custom
+      - POSTGRES_PASSWORD=qwerty123
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
