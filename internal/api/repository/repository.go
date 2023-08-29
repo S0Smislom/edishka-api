@@ -1,7 +1,16 @@
 package repository
 
+import "food/internal/api/model"
+
+type Auth interface {
+	CreateUser(data *model.Login) (*model.LoginResponse, error)
+}
+
+type User interface {
+	GetById(itemId int) (*model.User, error)
+}
+
 type Repository interface {
-	// User() UserRepository
-	// Authorization() AuthRepository
-	// City() CityRepository
+	Auth() Auth
+	User() User
 }

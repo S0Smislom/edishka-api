@@ -1,3 +1,7 @@
 bind_addr = ":8080"
 log_level = "debug"
-database_url = "host=localhost user=custom password=qwerty123 dbname=postgres port=5434 sslmode=disable"
+database_url = "host=localhost user=custom password=qwerty123 dbname=postgres port=5454 sslmode=disable"
+access_token_ttl = 24
+token_secret = "asdfasdfasdfasdfasfd"
+admin_access_token_ttl = 24
+admin_token_secret = "qweqweqweqweqweqweqweqweqweqweqeqwe"

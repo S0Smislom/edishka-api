@@ -12,6 +12,12 @@ type Config struct {
 	LogLevel    string `toml:"log_level"`
 	DatabaseURL string `toml:"database_url"`
 	SessionKey  string `toml:"session_key"`
+
+	AccessTokenTTL int    `toml:"access_token_ttl"`
+	TokenSecret    string `toml:"token_secret"`
+
+	AdminAccessToken int    `toml:"admin_access_token_ttl"`
+	AdminTokenSecret string `toml:"admin_token_secret"`
 }
 
 // initConfig ...

@@ -27,5 +27,11 @@ func (h *Handler) InitRoutes() http.Handler {
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
 	)).Methods(http.MethodGet)
+
+	// Auth
+	router.HandleFunc("/login", h.logIn()).Methods(http.MethodPost)
+	router.HandleFunc("/login/confirm", h.confirmCode()).Methods(http.MethodPost)
+	// router.HandleFunc("/refresh", h.refreshToken()).Methods(http.MethodGet)
+
 	return router
 }
