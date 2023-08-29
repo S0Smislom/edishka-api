@@ -1,3 +1,5 @@
+base_api_url = "http://localhost:8080"
+base_admin_api_url = "http://localhost:8082"
 bind_addr = ":8080"
 admin_addr = ":8082"
 log_level = "debug"

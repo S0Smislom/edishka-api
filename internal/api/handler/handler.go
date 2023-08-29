@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"food/internal/api/service"
+	"food/pkg/config"
+	"food/pkg/middleware"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,17 +15,18 @@ import (
 
 type Handler struct {
 	services *service.Service
+	config   *config.Config
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler(config *config.Config, services *service.Service) *Handler {
+	return &Handler{config: config, services: services}
 }
 
 func (h *Handler) InitRoutes() http.Handler {
 	router := mux.NewRouter()
-	router.Use(h.logRequest)
+	router.Use(middleware.LogRequest)
 	router.PathPrefix("/docs/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/docs/api/doc.json"), //The url pointing to API definition
+		httpSwagger.URL(fmt.Sprintf("%s/docs/api/doc.json", h.config.BaseAPIURL)), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),

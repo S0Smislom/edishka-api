@@ -50,7 +50,7 @@ func main() {
 
 	repo := postgres.NewRepository(db)
 	service := service.NewService(repo, config)
-	handler := handler.NewHandler(service)
+	handler := handler.NewHandler(config, service)
 	srv := new(server.Server)
 	go func() {
 		if err := srv.Run(config.BindAddr, handler.InitRoutes()); err != nil {

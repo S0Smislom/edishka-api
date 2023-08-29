@@ -8,6 +8,9 @@ import (
 
 // Config ...
 type Config struct {
+	BaseAPIURL      string `toml:"base_api_url"`
+	BaseAdminAPIURL string `toml:"base_admin_api_url"`
+
 	BindAddr    string `toml:"bind_addr"`
 	AdminAddr   string `toml:"admin_addr"`
 	LogLevel    string `toml:"log_level"`

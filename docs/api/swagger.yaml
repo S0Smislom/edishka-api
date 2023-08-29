@@ -1,10 +1,5 @@
 basePath: /
 definitions:
-  handler.errorResponse:
-    properties:
-      detail:
-        type: string
-    type: object
   model.Login:
     properties:
       first_name:
@@ -53,6 +48,11 @@ definitions:
       phone:
         type: string
     type: object
+  response.ErrorResponse:
+    properties:
+      detail:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -83,19 +83,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       summary: SignUp
       tags:
       - Auth
@@ -122,19 +122,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handler.errorResponse'
+            $ref: '#/definitions/response.ErrorResponse'
       summary: Confirm Code
       tags:
       - Auth
