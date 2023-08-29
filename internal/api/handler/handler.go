@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 
-	_ "food/docs"
+	_ "food/docs/api"
 )
 
 type Handler struct {
@@ -22,7 +22,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	router := mux.NewRouter()
 	router.Use(h.logRequest)
 	router.PathPrefix("/docs/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/docs/doc.json"), //The url pointing to API definition
+		httpSwagger.URL("http://localhost:8080/docs/api/doc.json"), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),

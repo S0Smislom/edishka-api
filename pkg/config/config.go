@@ -9,6 +9,7 @@ import (
 // Config ...
 type Config struct {
 	BindAddr    string `toml:"bind_addr"`
+	AdminAddr   string `toml:"admin_addr"`
 	LogLevel    string `toml:"log_level"`
 	DatabaseURL string `toml:"database_url"`
 	SessionKey  string `toml:"session_key"`
