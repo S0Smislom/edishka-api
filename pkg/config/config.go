@@ -20,8 +20,8 @@ type Config struct {
 	AccessTokenTTL int    `toml:"access_token_ttl"`
 	TokenSecret    string `toml:"token_secret"`
 
-	AdminAccessToken int    `toml:"admin_access_token_ttl"`
-	AdminTokenSecret string `toml:"admin_token_secret"`
+	AdminAccessTokenTTL int    `toml:"admin_access_token_ttl"`
+	AdminTokenSecret    string `toml:"admin_token_secret"`
 }
 
 // initConfig ...

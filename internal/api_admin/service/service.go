@@ -1,11 +1,18 @@
 package service
 
-import "food/internal/api_admin/repository"
+import (
+	"food/internal/api_admin/repository"
+	"food/pkg/config"
+)
 
 type Service struct {
-	repo repository.Repository
+	*AuthService
+	*UserService
 }
 
-func NewService(repo repository.Repository) *Service {
-	return &Service{repo: repo}
+func NewService(config *config.Config, repo repository.Repository) *Service {
+	return &Service{
+		AuthService: NewAuthService(config.AdminAccessTokenTTL, config.AdminTokenSecret, repo.User()),
+		UserService: NewUserService(repo.User()),
+	}
 }

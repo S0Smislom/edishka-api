@@ -9,6 +9,7 @@ import (
 type Auth interface {
 	CreateUser(data *model.Login) (*model.LoginResponse, error)
 	Login(data *model.LoginConfirm) (*model.LoginConfirmResponse, error)
+	ParseToken(accessToken string) (int, error)
 }
 
 type User interface{}

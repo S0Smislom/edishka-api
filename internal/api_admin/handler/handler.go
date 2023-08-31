@@ -32,5 +32,13 @@ func (h *Handler) InitRoutes() http.Handler {
 		httpSwagger.DocExpansion("none"),
 		httpSwagger.DomID("swagger-ui"),
 	)).Methods(http.MethodGet)
+
+	// Auth
+	router.HandleFunc("/login", h.login()).Methods(http.MethodPost)
+	api := router.PathPrefix("/v1").Subrouter()
+	// User
+	user := api.PathPrefix("/user").Subrouter()
+	user.Use(h.authenticateUser)
+	user.HandleFunc("/me", h.me()).Methods(http.MethodGet)
 	return router
 }

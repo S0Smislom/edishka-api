@@ -49,7 +49,7 @@ func main() {
 	defer db.Close()
 
 	repo := postgres.NewRepository(db)
-	service := service.NewService(repo)
+	service := service.NewService(config, repo)
 	handler := handler.NewHandler(config, service)
 
 	srv := new(server.Server)

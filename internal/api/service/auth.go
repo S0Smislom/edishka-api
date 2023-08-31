@@ -1,14 +1,17 @@
 package service
 
 import (
-	"crypto/sha1"
 	"errors"
-	"fmt"
 	"food/internal/api/model"
 	"food/internal/api/repository"
+	"food/pkg/hash"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+)
+
+const (
+	salt string = "hjqrhjqw124617ajfhajs"
 )
 
 type AuthService struct {
@@ -41,9 +44,6 @@ func (s *AuthService) CreateUser(data *model.Login) (*model.LoginResponse, error
 }
 
 func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmResponse, error) {
-	// if err := data.Validate(); err != nil {
-	// 	return nil, err
-	// }
 	if err := data.Validate(); err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmRespon
 	if err != nil {
 		return nil, err
 	}
-	if dbUser.Code == nil || generateHash(data.Code) != *dbUser.Code {
+	if dbUser.Code == nil || hash.GenerateHash(data.Code, salt) != *dbUser.Code {
 		return nil, errors.New("Invalid code")
 	}
 
@@ -80,15 +80,36 @@ func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmRespon
 	return response, nil
 }
 
+func (s *AuthService) ParseToken(accessToken string) (int, error) {
+	token, err := jwt.ParseWithClaims(accessToken, &model.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+
+		return []byte(s.tokenSecret), nil
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	claims, ok := token.Claims.(*model.TokenClaims)
+	if !ok {
+		return 0, errors.New("token claims are not of type *TokenClaims")
+	}
+
+	return claims.UserId, nil
+}
+
 func generateConfirmationCode() string {
 	code := "1111"
-	return generateHash(code)
+	// return generateHash(code)
+	return hash.GenerateHash(code, salt)
 }
 
-func generateHash(s string) string {
-	salt := "hjqrhjqw124617ajfhajs"
-	hash := sha1.New()
-	hash.Write([]byte(s))
+// func generateHash(s string) string {
+// 	salt := "hjqrhjqw124617ajfhajs"
+// 	hash := sha1.New()
+// 	hash.Write([]byte(s))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
-}
+// 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+// }
