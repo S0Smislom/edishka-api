@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS "user" (
     "last_name" VARCHAR(200),
     "is_superuser" BOOLEAN NOT NULL DEFAULT FALSE,
     "is_staff" BOOLEAN NOT NULL DEFAULT FALSE,
-    "code" VARCHAR(255) NOT NULL,
-    "birthday" DATE
+    "code" VARCHAR(255),
+    "birthday" DATE,
+    "password" VARCHAR(255)
 );
 -- +goose StatementEnd
 
