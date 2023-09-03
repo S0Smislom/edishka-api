@@ -36,9 +36,18 @@ func (h *Handler) InitRoutes() http.Handler {
 	// Auth
 	router.HandleFunc("/login", h.login()).Methods(http.MethodPost)
 	api := router.PathPrefix("/v1").Subrouter()
+	api.Use(h.authenticateUser)
 	// User
 	user := api.PathPrefix("/user").Subrouter()
-	user.Use(h.authenticateUser)
 	user.HandleFunc("/me", h.me()).Methods(http.MethodGet)
+
+	// Product
+	product := api.PathPrefix("/product").Subrouter()
+	product.HandleFunc("", h.handlerCreateProduct()).Methods(http.MethodPost)
+	product.HandleFunc("", h.handlerGetProductList()).Methods(http.MethodGet)
+	product.HandleFunc("/{id:[0-9]+}", h.handlerGetProductById()).Methods(http.MethodGet)
+	// TODO Подумать про метод put, мб будет проще с ним
+	product.HandleFunc("/{id:[0-9]+}", h.handlerUpdateProduct()).Methods(http.MethodPatch)
+	product.HandleFunc("/{id:[0-9]+}", h.handlerDeleteProduct()).Methods(http.MethodDelete)
 	return router
 }
