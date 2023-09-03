@@ -1,5 +1,22 @@
 basePath: /
 definitions:
+  model.CreateProduct:
+    properties:
+      calories:
+        type: integer
+      carbohydrates:
+        type: number
+      description:
+        type: string
+      fats:
+        type: number
+      slug:
+        type: string
+      squirrels:
+        type: number
+      title:
+        type: string
+    type: object
   model.Login:
     properties:
       login:
@@ -15,6 +32,61 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/model.User'
+    type: object
+  model.Product:
+    properties:
+      calories:
+        type: integer
+      carbohydrates:
+        type: number
+      created_at:
+        type: string
+      description:
+        type: string
+      fats:
+        type: number
+      id:
+        type: integer
+      photo:
+        type: string
+      slug:
+        type: string
+      squirrels:
+        type: number
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.ProductList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Product'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  model.UpdateProduct:
+    properties:
+      calories:
+        type: integer
+      carbohydrates:
+        type: number
+      description:
+        type: string
+      fats:
+        type: number
+      slug:
+        type: string
+      squirrels:
+        type: number
+      title:
+        type: string
     type: object
   model.User:
     properties:
@@ -88,6 +160,185 @@ paths:
       summary: Login
       tags:
       - Auth
+  /v1/product:
+    get:
+      consumes:
+      - application/json
+      description: Get product list
+      operationId: get-product-list
+      parameters:
+      - default: 25
+        description: limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: offset
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        name: caloriesGTE
+        type: integer
+      - in: query
+        name: caloriesLTE
+        type: integer
+      - in: query
+        name: carbohydratesGTE
+        type: number
+      - in: query
+        name: carbohydratesLTE
+        type: number
+      - in: query
+        name: fatsGTE
+        type: number
+      - in: query
+        name: fatsLTE
+        type: number
+      - in: query
+        name: slug
+        type: string
+      - in: query
+        name: squirrelsGTE
+        type: number
+      - in: query
+        name: squirrelsLTE
+        type: number
+      - in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ProductList'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get product list
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: Create product
+      operationId: create-product
+      parameters:
+      - description: product info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create product
+      tags:
+      - Product
+  /v1/product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product
+      operationId: delete-product
+      parameters:
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete product
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: Get product by id
+      operationId: get-product
+      parameters:
+      - description: product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get product by id
+      tags:
+      - Product
+    patch:
+      consumes:
+      - application/json
+      description: Update product
+      operationId: update-product
+      parameters:
+      - description: Product update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateProduct'
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update product
+      tags:
+      - Product
   /v1/user/me:
     get:
       description: Return current user

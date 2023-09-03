@@ -42,10 +42,12 @@ func main() {
 	if _, err := fmt.Scanln(&loginData.Phone); err != nil {
 		log.Fatal(err)
 	}
+	// TODO hide user input
 	fmt.Print("Password: ")
 	if _, err := fmt.Scanln(&loginData.Password); err != nil {
 		log.Fatal(err)
 	}
+	// TODO hide user input
 	fmt.Print("Password again: ")
 	if _, err := fmt.Scanln(&loginData.Password2); err != nil {
 		log.Fatal(err)
