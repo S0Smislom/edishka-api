@@ -29,7 +29,7 @@ func init() {
 // @version 1.0
 // @description Admin API Server for FOOD Application
 
-// @host localhost:8082
+// @host localhost:8092
 // @BasePath /
 
 // @securityDefinitions.apikey ApiKeyAuth

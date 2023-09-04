@@ -357,6 +357,521 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/recipe": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get recipe list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Get recipe list",
+                "operationId": "get-recipe-list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 25,
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "cookingTimeGTE",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "cookingTimeLTE",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "easy",
+                            "normal",
+                            "hard"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "Easy",
+                            "Normal",
+                            "Hard"
+                        ],
+                        "name": "difficulty_level",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "kitchen",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slug",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeList"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Create recipe",
+                "operationId": "create-recipe",
+                "parameters": [
+                    {
+                        "description": "Recipe info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateRecipe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Recipe"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/recipe-step": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get RecipeStep list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Get RecipeStep list",
+                "operationId": "get-recipe-step-list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 25,
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "recipeId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStepList"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create RecipeStep",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Create RecipeStep",
+                "operationId": "create-recipe-step",
+                "parameters": [
+                    {
+                        "description": "RecipeStep info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateRecipeStep"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStep"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/recipe-step/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get RecipeStep by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Get RecipeStep by id",
+                "operationId": "get-recipe-step",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "RecipeStep id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStep"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete RecipeStep",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Delete RecipeStep",
+                "operationId": "delete-recipe-step",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "RecipeStep id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStep"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update RecipeStep",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Update RecipeStep",
+                "operationId": "update-recipe-step",
+                "parameters": [
+                    {
+                        "description": "RecipeStep update data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateRecipeStep"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "RecipeStep id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStep"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/recipe/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get recipe by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Get recipe by id",
+                "operationId": "get-recipe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Recipe id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Recipe"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Delete recipe",
+                "operationId": "delete-recipe",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Recipe id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Recipe"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update recipe",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Recipe"
+                ],
+                "summary": "Update recipe",
+                "operationId": "update-recipe",
+                "parameters": [
+                    {
+                        "description": "Recipe update data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateRecipe"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Recipe id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Recipe"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/me": {
             "get": {
                 "security": [
@@ -434,6 +949,71 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "model.CreateRecipe": {
+            "type": "object",
+            "properties": {
+                "cooking_time": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "difficulty_level": {
+                    "$ref": "#/definitions/model.DifficultyLevel"
+                },
+                "kitchen": {
+                    "description": "TODO Вынести в отдельную таблицу",
+                    "type": "string"
+                },
+                "preparing_time": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CreateRecipeStep": {
+            "type": "object",
+            "required": [
+                "ordering",
+                "recipeId",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "ordering": {
+                    "type": "integer"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "recipeId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DifficultyLevel": {
+            "type": "string",
+            "enum": [
+                "easy",
+                "normal",
+                "hard"
+            ],
+            "x-enum-varnames": [
+                "Easy",
+                "Normal",
+                "Hard"
+            ]
         },
         "model.Login": {
             "type": "object",
@@ -518,6 +1098,123 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Recipe": {
+            "type": "object",
+            "properties": {
+                "cooking_time": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "difficulty_level": {
+                    "$ref": "#/definitions/model.DifficultyLevel"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kitchen": {
+                    "description": "TODO Вынести в отдельную таблицу",
+                    "type": "string"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "preparing_time": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RecipeList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Recipe"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.RecipeStep": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ordering": {
+                    "type": "integer"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "recipeId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RecipeStepList": {
+            "type": "object",
+            "required": [
+                "data",
+                "limit",
+                "offset",
+                "total"
+            ],
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.RecipeStep"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.UpdateProduct": {
             "type": "object",
             "properties": {
@@ -538,6 +1235,50 @@ const docTemplate = `{
                 },
                 "squirrels": {
                     "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateRecipe": {
+            "type": "object",
+            "properties": {
+                "cooking_time": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "difficulty_level": {
+                    "$ref": "#/definitions/model.DifficultyLevel"
+                },
+                "kitchen": {
+                    "description": "TODO Вынести в отдельную таблицу",
+                    "type": "string"
+                },
+                "preparing_time": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateRecipeStep": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "ordering": {
+                    "type": "integer"
                 },
                 "title": {
                     "type": "string"
@@ -597,7 +1338,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8082",
+	Host:             "localhost:8092",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Food Admin API",
