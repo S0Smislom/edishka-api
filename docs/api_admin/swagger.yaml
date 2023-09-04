@@ -17,6 +17,51 @@ definitions:
       title:
         type: string
     type: object
+  model.CreateRecipe:
+    properties:
+      cooking_time:
+        type: integer
+      description:
+        type: string
+      difficulty_level:
+        $ref: '#/definitions/model.DifficultyLevel'
+      kitchen:
+        description: TODO Вынести в отдельную таблицу
+        type: string
+      preparing_time:
+        type: integer
+      slug:
+        type: string
+      title:
+        type: string
+    type: object
+  model.CreateRecipeStep:
+    properties:
+      description:
+        type: string
+      ordering:
+        type: integer
+      photo:
+        type: string
+      recipeId:
+        type: integer
+      title:
+        type: string
+    required:
+    - ordering
+    - recipeId
+    - title
+    type: object
+  model.DifficultyLevel:
+    enum:
+    - easy
+    - normal
+    - hard
+    type: string
+    x-enum-varnames:
+    - Easy
+    - Normal
+    - Hard
   model.Login:
     properties:
       login:
@@ -71,6 +116,84 @@ definitions:
       total:
         type: integer
     type: object
+  model.Recipe:
+    properties:
+      cooking_time:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      difficulty_level:
+        $ref: '#/definitions/model.DifficultyLevel'
+      id:
+        type: integer
+      kitchen:
+        description: TODO Вынести в отдельную таблицу
+        type: string
+      photo:
+        type: string
+      preparing_time:
+        type: integer
+      published:
+        type: boolean
+      slug:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.RecipeList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Recipe'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  model.RecipeStep:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      ordering:
+        type: integer
+      photo:
+        type: string
+      recipeId:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.RecipeStepList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.RecipeStep'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    required:
+    - data
+    - limit
+    - offset
+    - total
+    type: object
   model.UpdateProduct:
     properties:
       calories:
@@ -85,6 +208,35 @@ definitions:
         type: string
       squirrels:
         type: number
+      title:
+        type: string
+    type: object
+  model.UpdateRecipe:
+    properties:
+      cooking_time:
+        type: integer
+      description:
+        type: string
+      difficulty_level:
+        $ref: '#/definitions/model.DifficultyLevel'
+      kitchen:
+        description: TODO Вынести в отдельную таблицу
+        type: string
+      preparing_time:
+        type: integer
+      published:
+        type: boolean
+      slug:
+        type: string
+      title:
+        type: string
+    type: object
+  model.UpdateRecipeStep:
+    properties:
+      description:
+        type: string
+      ordering:
+        type: integer
       title:
         type: string
     type: object
@@ -114,7 +266,7 @@ definitions:
       detail:
         type: string
     type: object
-host: localhost:8082
+host: localhost:8092
 info:
   contact: {}
   description: Admin API Server for FOOD Application
@@ -339,6 +491,337 @@ paths:
       summary: Update product
       tags:
       - Product
+  /v1/recipe:
+    get:
+      consumes:
+      - application/json
+      description: Get recipe list
+      operationId: get-recipe-list
+      parameters:
+      - default: 25
+        description: limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: offset
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        name: cookingTimeGTE
+        type: integer
+      - in: query
+        name: cookingTimeLTE
+        type: integer
+      - enum:
+        - easy
+        - normal
+        - hard
+        in: query
+        name: difficulty_level
+        type: string
+        x-enum-varnames:
+        - Easy
+        - Normal
+        - Hard
+      - in: query
+        name: kitchen
+        type: string
+      - in: query
+        name: slug
+        type: string
+      - in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeList'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get recipe list
+      tags:
+      - Recipe
+    post:
+      consumes:
+      - application/json
+      description: Create recipe
+      operationId: create-recipe
+      parameters:
+      - description: Recipe info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateRecipe'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Recipe'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create recipe
+      tags:
+      - Recipe
+  /v1/recipe-step:
+    get:
+      consumes:
+      - application/json
+      description: Get RecipeStep list
+      operationId: get-recipe-step-list
+      parameters:
+      - default: 25
+        description: limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: offset
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        name: recipeId
+        required: true
+        type: integer
+      - in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStepList'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get RecipeStep list
+      tags:
+      - RecipeStep
+    post:
+      consumes:
+      - application/json
+      description: Create RecipeStep
+      operationId: create-recipe-step
+      parameters:
+      - description: RecipeStep info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateRecipeStep'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStep'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create RecipeStep
+      tags:
+      - RecipeStep
+  /v1/recipe-step/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete RecipeStep
+      operationId: delete-recipe-step
+      parameters:
+      - description: RecipeStep id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStep'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete RecipeStep
+      tags:
+      - RecipeStep
+    get:
+      consumes:
+      - application/json
+      description: Get RecipeStep by id
+      operationId: get-recipe-step
+      parameters:
+      - description: RecipeStep id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStep'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get RecipeStep by id
+      tags:
+      - RecipeStep
+    patch:
+      consumes:
+      - application/json
+      description: Update RecipeStep
+      operationId: update-recipe-step
+      parameters:
+      - description: RecipeStep update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateRecipeStep'
+      - description: RecipeStep id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStep'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update RecipeStep
+      tags:
+      - RecipeStep
+  /v1/recipe/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete recipe
+      operationId: delete-recipe
+      parameters:
+      - description: Recipe id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Recipe'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete recipe
+      tags:
+      - Recipe
+    get:
+      consumes:
+      - application/json
+      description: Get recipe by id
+      operationId: get-recipe
+      parameters:
+      - description: Recipe id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Recipe'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get recipe by id
+      tags:
+      - Recipe
+    patch:
+      consumes:
+      - application/json
+      description: Update recipe
+      operationId: update-recipe
+      parameters:
+      - description: Recipe update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateRecipe'
+      - description: Recipe id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Recipe'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update recipe
+      tags:
+      - Recipe
   /v1/user/me:
     get:
       description: Return current user
