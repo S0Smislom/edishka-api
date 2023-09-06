@@ -11,6 +11,7 @@ type Repository struct {
 	*ProductRepository
 	*RecipeRepository
 	*RecipeStepRepository
+	*StepProductRepository
 }
 
 func NewRepository(db *sql.DB) *Repository {
@@ -43,4 +44,11 @@ func (r *Repository) RecipeStep() repository.RecipeStep {
 		r.RecipeStepRepository = NewRecipeStepRepository(r.db)
 	}
 	return r.RecipeStepRepository
+}
+
+func (r *Repository) StepProduct() repository.StepProduct {
+	if r.StepProductRepository == nil {
+		r.StepProductRepository = NewStepProductRepository(r.db)
+	}
+	return r.StepProductRepository
 }

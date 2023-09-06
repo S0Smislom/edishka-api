@@ -35,9 +35,19 @@ type RecipeStep interface {
 	Delete(id int) error
 }
 
+type StepProduct interface {
+	Create(data *model.CreateStepProduct) (int, error)
+	GetById(id int) (*model.StepProduct, error)
+	GetList(limit, offset int, filters *model.StepProductFilter) ([]*model.StepProduct, error)
+	Count(filters *model.StepProductFilter) (int, error)
+	Update(id int, data *model.UpdateStepProduct) error
+	Delete(id int) error
+}
+
 type Repository interface {
 	User() User
 	Product() Product
 	Recipe() Recipe
 	RecipeStep() RecipeStep
+	StepProduct() StepProduct
 }

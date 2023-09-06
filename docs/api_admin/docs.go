@@ -872,6 +872,248 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/step-product": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get StepProduct list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StepProduct"
+                ],
+                "summary": "Get StepProduct list",
+                "operationId": "get-step-product-list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 25,
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "productId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "recipeStepId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StepProductList"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create StepProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StepProduct"
+                ],
+                "summary": "Create StepProduct",
+                "operationId": "create-step-product",
+                "parameters": [
+                    {
+                        "description": "StepProduct info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateStepProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StepProduct"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/step-product/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get StepProduct by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StepProduct"
+                ],
+                "summary": "Get StepProduct by id",
+                "operationId": "get-step-product",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "StepProduct id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StepProduct"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete StepProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StepProduct"
+                ],
+                "summary": "Delete StepProduct",
+                "operationId": "delete-step-product",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "StepProduct id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StepProduct"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update StepProduct",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "StepProduct"
+                ],
+                "summary": "Update StepProduct",
+                "operationId": "update-step-product",
+                "parameters": [
+                    {
+                        "description": "StepProduct update data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateStepProduct"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "StepProduct id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.StepProduct"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/me": {
             "get": {
                 "security": [
@@ -999,6 +1241,25 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "model.CreateStepProduct": {
+            "type": "object",
+            "required": [
+                "amount",
+                "product_id",
+                "recipe_step_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "recipe_step_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1215,6 +1476,54 @@ const docTemplate = `{
                 }
             }
         },
+        "model.StepProduct": {
+            "type": "object",
+            "required": [
+                "amount",
+                "product",
+                "recipe_step_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "product": {
+                    "$ref": "#/definitions/model.Product"
+                },
+                "recipe_step_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.StepProductList": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.StepProduct"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.UpdateProduct": {
             "type": "object",
             "properties": {
@@ -1282,6 +1591,14 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "model.UpdateStepProduct": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
                 }
             }
         },

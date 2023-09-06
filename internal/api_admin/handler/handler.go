@@ -55,7 +55,6 @@ func (h *Handler) InitRoutes() http.Handler {
 	recipe.HandleFunc("", h.handlerCreateRecipe()).Methods(http.MethodPost)
 	recipe.HandleFunc("", h.handlerGetRecipeList()).Methods(http.MethodGet)
 	recipe.HandleFunc("/{id:[0-9]+}", h.handlerGetRecipeById()).Methods(http.MethodGet)
-	// TODO Подумать про метод put, мб будет проще с ним
 	recipe.HandleFunc("/{id:[0-9]+}", h.handlerUpdateRecipe()).Methods(http.MethodPatch)
 	recipe.HandleFunc("/{id:[0-9]+}", h.handlerDeleteRecipe()).Methods(http.MethodDelete)
 
@@ -64,8 +63,15 @@ func (h *Handler) InitRoutes() http.Handler {
 	recipeStep.HandleFunc("", h.handlerCreateRecipeStep()).Methods(http.MethodPost)
 	recipeStep.HandleFunc("", h.handlerGetRecipeStepList()).Methods(http.MethodGet)
 	recipeStep.HandleFunc("/{id:[0-9]+}", h.handlerGetRecipeStepById()).Methods(http.MethodGet)
-	// TODO Подумать про метод put, мб будет проще с ним
 	recipeStep.HandleFunc("/{id:[0-9]+}", h.handlerUpdateRecipeStep()).Methods(http.MethodPatch)
 	recipeStep.HandleFunc("/{id:[0-9]+}", h.handlerDeleteRecipeStep()).Methods(http.MethodDelete)
+
+	// StepProduct
+	stepProduct := api.PathPrefix("/step-product").Subrouter()
+	stepProduct.HandleFunc("", h.handlerCreateStepProduct()).Methods(http.MethodPost)
+	stepProduct.HandleFunc("", h.handlerGetStepProductList()).Methods(http.MethodGet)
+	stepProduct.HandleFunc("/{id:[0-9]+}", h.handlerGetStepProductById()).Methods(http.MethodGet)
+	stepProduct.HandleFunc("/{id:[0-9]+}", h.handlerUpdateStepProduct()).Methods(http.MethodPatch)
+	stepProduct.HandleFunc("/{id:[0-9]+}", h.handlerDeleteStepProduct()).Methods(http.MethodDelete)
 	return router
 }

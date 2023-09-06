@@ -52,6 +52,19 @@ definitions:
     - recipeId
     - title
     type: object
+  model.CreateStepProduct:
+    properties:
+      amount:
+        type: number
+      product_id:
+        type: integer
+      recipe_step_id:
+        type: integer
+    required:
+    - amount
+    - product_id
+    - recipe_step_id
+    type: object
   model.DifficultyLevel:
     enum:
     - easy
@@ -194,6 +207,38 @@ definitions:
     - offset
     - total
     type: object
+  model.StepProduct:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/model.Product'
+      recipe_step_id:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - amount
+    - product
+    - recipe_step_id
+    type: object
+  model.StepProductList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.StepProduct'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
   model.UpdateProduct:
     properties:
       calories:
@@ -239,6 +284,11 @@ definitions:
         type: integer
       title:
         type: string
+    type: object
+  model.UpdateStepProduct:
+    properties:
+      amount:
+        type: number
     type: object
   model.User:
     properties:
@@ -822,6 +872,161 @@ paths:
       summary: Update recipe
       tags:
       - Recipe
+  /v1/step-product:
+    get:
+      consumes:
+      - application/json
+      description: Get StepProduct list
+      operationId: get-step-product-list
+      parameters:
+      - default: 25
+        description: limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: offset
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        name: productId
+        type: integer
+      - in: query
+        name: recipeStepId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StepProductList'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get StepProduct list
+      tags:
+      - StepProduct
+    post:
+      consumes:
+      - application/json
+      description: Create StepProduct
+      operationId: create-step-product
+      parameters:
+      - description: StepProduct info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateStepProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StepProduct'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create StepProduct
+      tags:
+      - StepProduct
+  /v1/step-product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete StepProduct
+      operationId: delete-step-product
+      parameters:
+      - description: StepProduct id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StepProduct'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete StepProduct
+      tags:
+      - StepProduct
+    get:
+      consumes:
+      - application/json
+      description: Get StepProduct by id
+      operationId: get-step-product
+      parameters:
+      - description: StepProduct id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StepProduct'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get StepProduct by id
+      tags:
+      - StepProduct
+    patch:
+      consumes:
+      - application/json
+      description: Update StepProduct
+      operationId: update-step-product
+      parameters:
+      - description: StepProduct update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateStepProduct'
+      - description: StepProduct id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.StepProduct'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update StepProduct
+      tags:
+      - StepProduct
   /v1/user/me:
     get:
       description: Return current user
