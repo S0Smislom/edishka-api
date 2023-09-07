@@ -27,9 +27,14 @@ CREATE TABLE if not EXISTS "recipe_step" (
 );
 
 CREATE TABLE if not EXISTS "step_product" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
     "recipe_step_id" int not null REFERENCES "recipe_step" ("id") ON DELETE CASCADE,
     "product_id" int not null REFERENCES "product" ("id") on delete CASCADE,
-    "amount" DOUBLE PRECISION NOT NULL
+    "amount" DOUBLE PRECISION NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE ("recipe_step_id", "product_id")
 );
 -- +goose StatementEnd
 
