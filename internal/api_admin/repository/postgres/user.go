@@ -20,7 +20,7 @@ func (r *UserRepository) GetByPhone(phone string) (*model.User, error) {
 		"select id, phone, first_name, last_name, birthday, created_at, updated_at, is_superuser, is_staff, password from \"user\" where phone=$1;",
 		phone,
 	).Scan(
-		&u.ID,
+		&u.Id,
 		&u.Phone,
 		&u.FirstName,
 		&u.LastName,
@@ -45,7 +45,7 @@ func (r *UserRepository) GetById(id int) (*model.User, error) {
 		"select id, phone, first_name, last_name, birthday, created_at, updated_at, is_superuser, is_staff, password from \"user\" where id=$1;",
 		id,
 	).Scan(
-		&u.ID,
+		&u.Id,
 		&u.Phone,
 		&u.FirstName,
 		&u.LastName,

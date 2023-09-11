@@ -1,16 +1,12 @@
 package model
 
-import "time"
-
 type StepProduct struct {
-	Id           int      `json:"id"`
+	Base
+	Timestamp
 	RecipeStepId int      `json:"recipe_step_id" binding:"required"`
 	ProductId    int      `json:"-"`
 	Product      *Product `json:"product" binding:"required"`
 	Amount       float64  `json:"amount" binding:"required"`
-
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type CreateStepProduct struct {
@@ -32,8 +28,8 @@ func (m *UpdateStepProduct) Validate() error {
 }
 
 type StepProductFilter struct {
-	RecipeStepId *int `schema:"recipe_step_id"`
-	ProductId    *int `schema:"product_id"`
+	RecipeStepId *int `json:"recipe_step_id" schema:"recipe_step_id"`
+	ProductId    *int `json:"product_id" schema:"product_id"`
 }
 
 type StepProductList struct {

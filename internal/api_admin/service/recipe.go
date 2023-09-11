@@ -6,11 +6,24 @@ import (
 )
 
 type RecipeService struct {
-	repo repository.Recipe
+	repo            repository.Recipe
+	recipeStepRepo  repository.RecipeStep
+	productRepo     repository.Product
+	stepProductRepo repository.StepProduct
 }
 
-func NewRecipeService(repo repository.Recipe) *RecipeService {
-	return &RecipeService{repo: repo}
+func NewRecipeService(
+	repo repository.Recipe,
+	recipeStepRepo repository.RecipeStep,
+	stepProductRepo repository.StepProduct,
+	productRepo repository.Product,
+) *RecipeService {
+	return &RecipeService{
+		repo:            repo,
+		recipeStepRepo:  recipeStepRepo,
+		stepProductRepo: stepProductRepo,
+		productRepo:     productRepo,
+	}
 }
 
 func (s *RecipeService) Create(data *model.CreateRecipe) (*model.Recipe, error) {

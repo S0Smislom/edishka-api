@@ -1,20 +1,16 @@
 package model
 
 import (
-	"time"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 type User struct {
-	ID        int     `json:"id"`
+	Base
+	Timestamp
 	Phone     string  `json:"phone"`
 	FirstName *string `json:"first_name"`
 	LastName  *string `json:"last_name"`
 	Birthday  *string `json:"birthday"`
-
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 
 	IsSuperuser bool `json:"is_superuser"`
 	IsStaff     bool `json:"is_staff"`

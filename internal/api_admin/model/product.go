@@ -1,11 +1,8 @@
 package model
 
-import "time"
-
 type Product struct {
-	Id        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Base
+	Timestamp
 
 	Title       string  `json:"title"`
 	Slug        string  `json:"slug"`
@@ -58,14 +55,14 @@ func (m UpdateProduct) Validate() error {
 }
 
 type ProductFilter struct {
-	Title            *string  `json:"title"`
-	Slug             *string  `json:"slug"`
-	CaloriesGTE      *int     `json:"caloriesGTE"`
-	CaloriesLTE      *int     `json:"caloriesLTE"`
-	SquirrelsGTE     *float64 `json:"squirrelsGTE"`
-	SquirrelsLTE     *float64 `json:"squirrelsLTE"`
-	FatsGTE          *float64 `json:"fatsGTE"`
-	FatsLTE          *float64 `json:"fatsLTE"`
-	CarbohydratesGTE *float64 `json:"carbohydratesGTE"`
-	CarbohydratesLTE *float64 `json:"carbohydratesLTE"`
+	Title            *string  `json:"title" schema:"title"`
+	Slug             *string  `json:"slug" schema:"slug"`
+	CaloriesGTE      *int     `json:"calories__gte" schema:"calories__gte"`
+	CaloriesLTE      *int     `json:"calories__lte" schema:"calories__lte"`
+	SquirrelsGTE     *float64 `json:"squirrels__gte" schema:"squirrels__gte"`
+	SquirrelsLTE     *float64 `json:"squirrels__lte" schema:"squirrels__lte"`
+	FatsGTE          *float64 `json:"fats__gte" schema:"fats__gte"`
+	FatsLTE          *float64 `json:"fats__lte" schema:"fats__lte"`
+	CarbohydratesGTE *float64 `json:"carbohydrates__gte" schema:"carbohydrates__gte"`
+	CarbohydratesLTE *float64 `json:"carbohydrates__lte" schema:"carbohydrates__lte"`
 }

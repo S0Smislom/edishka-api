@@ -131,6 +131,11 @@ definitions:
     type: object
   model.Recipe:
     properties:
+      calories:
+        description: Calculated fields
+        type: number
+      carbohydrates:
+        type: number
       cooking_time:
         type: integer
       created_at:
@@ -139,6 +144,8 @@ definitions:
         type: string
       difficulty_level:
         $ref: '#/definitions/model.DifficultyLevel'
+      fats:
+        type: number
       id:
         type: integer
       kitchen:
@@ -148,10 +155,16 @@ definitions:
         type: string
       preparing_time:
         type: integer
+      products:
+        items:
+          $ref: '#/definitions/model.RecipeProduct'
+        type: array
       published:
         type: boolean
       slug:
         type: string
+      squirrels:
+        type: number
       title:
         type: string
       updated_at:
@@ -169,6 +182,33 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  model.RecipeProduct:
+    properties:
+      amount:
+        type: integer
+      calories:
+        type: integer
+      carbohydrates:
+        type: number
+      created_at:
+        type: string
+      description:
+        type: string
+      fats:
+        type: number
+      id:
+        type: integer
+      photo:
+        type: string
+      slug:
+        type: string
+      squirrels:
+        type: number
+      title:
+        type: string
+      updated_at:
+        type: string
     type: object
   model.RecipeStep:
     properties:
@@ -380,31 +420,31 @@ paths:
         name: offset
         type: integer
       - in: query
-        name: caloriesGTE
+        name: calories__gte
         type: integer
       - in: query
-        name: caloriesLTE
+        name: calories__lte
         type: integer
       - in: query
-        name: carbohydratesGTE
+        name: carbohydrates__gte
         type: number
       - in: query
-        name: carbohydratesLTE
+        name: carbohydrates__lte
         type: number
       - in: query
-        name: fatsGTE
+        name: fats__gte
         type: number
       - in: query
-        name: fatsLTE
+        name: fats__lte
         type: number
       - in: query
         name: slug
         type: string
       - in: query
-        name: squirrelsGTE
+        name: squirrels__gte
         type: number
       - in: query
-        name: squirrelsLTE
+        name: squirrels__lte
         type: number
       - in: query
         name: title
@@ -559,10 +599,10 @@ paths:
         name: offset
         type: integer
       - in: query
-        name: cookingTimeGTE
+        name: cooking_time__gte
         type: integer
       - in: query
-        name: cookingTimeLTE
+        name: cooking_time__lte
         type: integer
       - enum:
         - easy
@@ -646,7 +686,7 @@ paths:
         name: offset
         type: integer
       - in: query
-        name: recipeId
+        name: recipe_id
         required: true
         type: integer
       - in: query
@@ -890,10 +930,10 @@ paths:
         name: offset
         type: integer
       - in: query
-        name: productId
+        name: product_id
         type: integer
       - in: query
-        name: recipeStepId
+        name: recipe_step_id
         type: integer
       produces:
       - application/json

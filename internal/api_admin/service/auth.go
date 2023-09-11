@@ -55,7 +55,7 @@ func (s *AuthService) Login(data *model.Login) (*model.LoginResponse, error) {
 			ExpiresAt: time.Now().Add(time.Duration(s.tokenTTL) * time.Hour).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		UserId: user.ID,
+		UserId: user.Id,
 	})
 	access_token, err := accessToken.SignedString([]byte(s.tokenSecret))
 	if err != nil {

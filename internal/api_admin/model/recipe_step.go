@@ -1,11 +1,8 @@
 package model
 
-import "time"
-
 type RecipeStep struct {
-	Id        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Base
+	Timestamp
 
 	Title       string  `json:"title"`
 	Description *string `json:"description"`
@@ -46,6 +43,6 @@ type RecipeStepList struct {
 }
 
 type RecipeStepFilter struct {
-	RecipeID int     `json:"recipeId" binding:"required"`
-	Title    *string `json:"title"`
+	RecipeID int     `json:"recipe_id" schema:"recipe_id" binding:"required"`
+	Title    *string `json:"title" schema:"title"`
 }
