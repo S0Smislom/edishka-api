@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type DifficultyLevel string
 
 const (
@@ -11,9 +9,8 @@ const (
 )
 
 type Recipe struct {
-	Id        int       `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Base
+	Timestamp
 
 	Title       string  `json:"title"`
 	Slug        string  `json:"slug"`
@@ -26,6 +23,19 @@ type Recipe struct {
 	Kitchen         string          `json:"kitchen"`
 	DifficultyLevel DifficultyLevel `json:"difficulty_level"`
 	Published       bool            `json:"published"`
+
+	// Calculated fields
+	Calories      float64 `json:"calories"`
+	Squirrels     float64 `json:"squirrels"`
+	Fats          float64 `json:"fats"`
+	Carbohydrates float64 `json:"carbohydrates"`
+
+	Products []*RecipeProduct `json:"products"`
+}
+
+type RecipeProduct struct {
+	Product
+	Amount int `json:"amount"`
 }
 
 type CreateRecipe struct {
@@ -69,10 +79,10 @@ type RecipeList struct {
 }
 
 type RecipeFilter struct {
-	Title           *string          `json:"title"`
-	Slug            *string          `json:"slug"`
-	CookingTimeGTE  *int             `json:"cookingTimeGTE"`
-	CookingTimeLTE  *int             `json:"cookingTimeLTE"`
-	Kitchen         *string          `json:"kitchen"`
-	DifficultyLevel *DifficultyLevel `json:"difficulty_level"`
+	Title           *string          `schema:"title" json:"title"`
+	Slug            *string          `schema:"slug" json:"slug"`
+	CookingTimeGTE  *int             `schema:"cooking_time__gte" json:"cooking_time__gte"`
+	CookingTimeLTE  *int             `schema:"cooking_time__lte" json:"cooking_time__lte"`
+	Kitchen         *string          `schema:"kitchen" json:"kitchen"`
+	DifficultyLevel *DifficultyLevel `schema:"difficulty_level" json:"difficulty_level"`
 }

@@ -37,38 +37,26 @@ func (r *RecipeRepository) Create(data *model.CreateRecipe) (int, error) {
 }
 
 func (r *RecipeRepository) GetById(id int) (*model.Recipe, error) {
-	p := &model.Recipe{}
-	if err := r.db.QueryRow(
-		"select id, title, slug, description, cooking_time, preparing_time, kitchen, difficulty_level, created_at, updated_at, photo, published from recipe where id=$1",
-		id,
-	).Scan(
-		&p.Id,
-		&p.Title,
-		&p.Slug,
-		&p.Description,
-		&p.CookingTime,
-		&p.PreparingTime,
-		&p.Kitchen,
-		&p.DifficultyLevel,
-		&p.CreatedAt,
-		&p.UpdatedAt,
-		&p.Photo,
-		&p.Published,
-	); err != nil {
+	query := r.querySelect() + " where r.id=$1 group by r.id"
+	queryRow := r.db.QueryRow(query, id)
+	p, err := r.scan(queryRow)
+	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("Recipe not found")
 		}
 		return nil, err
 	}
+	p.Products = r.getRecipeProduct(id)
 	return p, nil
 }
 
 func (r *RecipeRepository) GetList(limit, offset int, filters *model.RecipeFilter) ([]*model.Recipe, error) {
-	tempQuery := "select id, title, slug, description, cooking_time, preparing_time, kitchen, difficulty_level, created_at, updated_at, photo, published from recipe"
+	tempQuery := r.querySelect()
 	query, values, err := r.prepareFilters(tempQuery, filters)
 	if err != nil {
 		return nil, err
 	}
+	query += " group by r.id"
 	query += " limit " + strconv.Itoa(limit)
 	query += " offset " + strconv.Itoa(offset)
 	rows, err := r.db.Query(query, values...)
@@ -78,23 +66,11 @@ func (r *RecipeRepository) GetList(limit, offset int, filters *model.RecipeFilte
 	defer rows.Close()
 	recipes := []*model.Recipe{}
 	for rows.Next() {
-		p := &model.Recipe{}
-		if err := rows.Scan(
-			&p.Id,
-			&p.Title,
-			&p.Slug,
-			&p.Description,
-			&p.CookingTime,
-			&p.PreparingTime,
-			&p.Kitchen,
-			&p.DifficultyLevel,
-			&p.CreatedAt,
-			&p.UpdatedAt,
-			&p.Photo,
-			&p.Published,
-		); err != nil {
-			return nil, err
+		p, err := r.scan(rows)
+		if err != nil {
+			continue
 		}
+		p.Products = r.getRecipeProduct(p.Id)
 		recipes = append(recipes, p)
 	}
 	return recipes, nil
@@ -195,9 +171,119 @@ func (r *RecipeRepository) prepareFilters(query string, filters *model.RecipeFil
 		filterValues = append(filterValues, *filters.DifficultyLevel)
 		filterQuery = append(filterQuery, "difficulty_level like $"+strconv.Itoa(len(filterValues)))
 	}
-
 	if len(filterValues) == 0 {
 		return query, filterValues, nil
 	}
 	return query + " where " + strings.Join(filterQuery, " AND "), filterValues, nil
+}
+
+func (r *RecipeRepository) scan(row interface {
+	Scan(dest ...any) error
+}) (*model.Recipe, error) {
+	p := &model.Recipe{}
+	if err := row.Scan(
+		&p.Id,
+		&p.Title,
+		&p.Slug,
+		&p.Description,
+		&p.CookingTime,
+		&p.PreparingTime,
+		&p.Kitchen,
+		&p.DifficultyLevel,
+		&p.CreatedAt,
+		&p.UpdatedAt,
+		&p.Photo,
+		&p.Published,
+		&p.Calories,
+		&p.Squirrels,
+		&p.Fats,
+		&p.Carbohydrates,
+	); err != nil {
+		return nil, err
+	}
+	return p, nil
+}
+
+func (r *RecipeRepository) querySelect() string {
+	query := `
+		select 
+			r.id,
+			r.title,
+			r.slug,
+			r.description,
+			r.cooking_time,
+			r.preparing_time,
+			r.kitchen,
+			r.difficulty_level,
+			r.created_at,
+			r.updated_at,
+			r.photo,
+			r.published,
+			sum(coalesce(sp.amount, 0) * coalesce(p.calories, 0)/100),
+			sum(coalesce(sp.amount, 0) * coalesce(p.fats, 0)/100),
+			sum(coalesce(sp.amount, 0) * coalesce(p.squirrels , 0)/100),
+			sum(coalesce(sp.amount, 0) * coalesce(p.carbohydrates , 0)/100)
+		from recipe as r
+		left join recipe_step rs
+			left join step_product sp 
+				left join product p 
+				on sp.product_id = p.id
+			on rs.id = sp.recipe_step_id
+		on r.id=rs.recipe_id
+	`
+	return query
+}
+
+func (r *RecipeRepository) getRecipeProduct(recipeId int) []*model.RecipeProduct {
+	query := `
+	select 
+		p.id,
+		p.title,
+		p.slug,
+		p.description,
+		p.calories,
+		p.squirrels,
+		p.fats,
+		p.carbohydrates,
+		p.created_at,
+		p.updated_at,
+		p.photo,
+		sum(sp.amount) 
+	from recipe r 
+	left join recipe_step rs
+		left join step_product sp 
+			left join product p 
+			on sp.product_id = p.id
+		on rs.id = sp.recipe_step_id
+	on r.id=rs.recipe_id
+	where r.id=$1
+	group by r.id, p.id
+	`
+	products := []*model.RecipeProduct{}
+	rows, err := r.db.Query(query, recipeId)
+	if err != nil {
+		return products
+	}
+	defer rows.Close()
+	for rows.Next() {
+		p := &model.RecipeProduct{}
+		if err := rows.Scan(
+			&p.Id,
+			&p.Title,
+			&p.Slug,
+			&p.Description,
+			&p.Calories,
+			&p.Squirrels,
+			&p.Fats,
+			&p.Carbohydrates,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&p.Photo,
+			&p.Amount,
+		); err != nil {
+			continue
+		}
+		products = append(products, p)
+	}
+	return products
 }

@@ -111,32 +111,32 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "caloriesGTE",
+                        "name": "calories__gte",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "caloriesLTE",
+                        "name": "calories__lte",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "carbohydratesGTE",
+                        "name": "carbohydrates__gte",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "carbohydratesLTE",
+                        "name": "carbohydrates__lte",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "fatsGTE",
+                        "name": "fats__gte",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "fatsLTE",
+                        "name": "fats__lte",
                         "in": "query"
                     },
                     {
@@ -146,12 +146,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "number",
-                        "name": "squirrelsGTE",
+                        "name": "squirrels__gte",
                         "in": "query"
                     },
                     {
                         "type": "number",
-                        "name": "squirrelsLTE",
+                        "name": "squirrels__lte",
                         "in": "query"
                     },
                     {
@@ -393,12 +393,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "cookingTimeGTE",
+                        "name": "cooking_time__gte",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "cookingTimeLTE",
+                        "name": "cooking_time__lte",
                         "in": "query"
                     },
                     {
@@ -528,7 +528,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "recipeId",
+                        "name": "recipe_id",
                         "in": "query",
                         "required": true
                     },
@@ -908,12 +908,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "name": "productId",
+                        "name": "product_id",
                         "in": "query"
                     },
                     {
                         "type": "integer",
-                        "name": "recipeStepId",
+                        "name": "recipe_step_id",
                         "in": "query"
                     }
                 ],
@@ -1362,6 +1362,13 @@ const docTemplate = `{
         "model.Recipe": {
             "type": "object",
             "properties": {
+                "calories": {
+                    "description": "Calculated fields",
+                    "type": "number"
+                },
+                "carbohydrates": {
+                    "type": "number"
+                },
                 "cooking_time": {
                     "type": "integer"
                 },
@@ -1373,6 +1380,9 @@ const docTemplate = `{
                 },
                 "difficulty_level": {
                     "$ref": "#/definitions/model.DifficultyLevel"
+                },
+                "fats": {
+                    "type": "number"
                 },
                 "id": {
                     "type": "integer"
@@ -1387,11 +1397,20 @@ const docTemplate = `{
                 "preparing_time": {
                     "type": "integer"
                 },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.RecipeProduct"
+                    }
+                },
                 "published": {
                     "type": "boolean"
                 },
                 "slug": {
                     "type": "string"
+                },
+                "squirrels": {
+                    "type": "number"
                 },
                 "title": {
                     "type": "string"
@@ -1418,6 +1437,47 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.RecipeProduct": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "calories": {
+                    "type": "integer"
+                },
+                "carbohydrates": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "fats": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "squirrels": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },

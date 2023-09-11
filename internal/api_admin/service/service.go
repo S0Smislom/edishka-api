@@ -19,7 +19,7 @@ func NewService(config *config.Config, repo repository.Repository) *Service {
 		AuthService:        NewAuthService(config.AdminAccessTokenTTL, config.AdminTokenSecret, repo.User()),
 		UserService:        NewUserService(repo.User()),
 		ProductService:     NewProductService(repo.Product()),
-		RecipeService:      NewRecipeService(repo.Recipe()),
+		RecipeService:      NewRecipeService(repo.Recipe(), repo.RecipeStep(), repo.StepProduct(), repo.Product()),
 		RecipeStepService:  NewRecipeStepService(repo.RecipeStep()),
 		StepProductService: NewStepProductService(repo.StepProduct(), repo.Product()),
 	}
