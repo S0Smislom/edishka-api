@@ -15,6 +15,7 @@ type Product interface {
 	Count(filters *model.ProductFilter) (int, error)
 	Update(id int, data *model.UpdateProduct) error
 	Delete(id int) error
+	UpdatePhoto(id int, photo *string) error
 }
 
 type Recipe interface {

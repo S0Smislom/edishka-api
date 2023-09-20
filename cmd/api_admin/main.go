@@ -7,8 +7,10 @@ import (
 	"food/internal/api_admin/handler"
 	"food/internal/api_admin/repository/postgres"
 	"food/internal/api_admin/service"
+	"food/internal/file_service/minio"
 	"food/pkg/config"
 	"food/pkg/database"
+	objectstorage "food/pkg/object_storage"
 	"log"
 	"os"
 	"os/signal"
@@ -47,9 +49,16 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	minioClient, err := objectstorage.InitMinio(
+		config.MinioEndpoint,
+		config.MinioAccessKey,
+		config.MinioSecretKey,
+		config.MinioUseSSL,
+	)
 
 	repo := postgres.NewRepository(db)
-	service := service.NewService(config, repo)
+	fileService := minio.NewFileServcie(minioClient)
+	service := service.NewService(config, repo, fileService)
 	handler := handler.NewHandler(config, service)
 
 	srv := new(server.Server)

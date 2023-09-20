@@ -49,6 +49,8 @@ func (h *Handler) InitRoutes() http.Handler {
 	// TODO Подумать про метод put, мб будет проще с ним
 	product.HandleFunc("/{id:[0-9]+}", h.handlerUpdateProduct()).Methods(http.MethodPatch)
 	product.HandleFunc("/{id:[0-9]+}", h.handlerDeleteProduct()).Methods(http.MethodDelete)
+	product.HandleFunc("/{id:[0-9]+}/photo", h.uploadPhotoHandler()).Methods(http.MethodPost)
+	product.HandleFunc("/{id:[0-9]+}/photo", h.deletePhotoHandler()).Methods(http.MethodDelete)
 
 	// Recipe
 	recipe := api.PathPrefix("/recipe").Subrouter()

@@ -581,6 +581,60 @@ paths:
       summary: Update product
       tags:
       - Product
+  /v1/product/{id}/photo:
+    delete:
+      description: Delete product photo
+      operationId: delete-product-photo
+      parameters:
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete photo
+      tags:
+      - Product
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload product photo
+      operationId: upload-product-photo
+      parameters:
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: this is a test file
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Product'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upload photo
+      tags:
+      - Product
   /v1/recipe:
     get:
       consumes:

@@ -1,16 +1,24 @@
 package service
 
 import (
+	"fmt"
 	"food/internal/api_admin/model"
 	"food/internal/api_admin/repository"
+	fileservice "food/internal/file_service"
+	"mime/multipart"
+)
+
+const (
+	fileCategory = "product"
 )
 
 type ProductService struct {
-	repo repository.Product
+	repo        repository.Product
+	fileService fileservice.FileService
 }
 
-func NewProductService(repo repository.Product) *ProductService {
-	return &ProductService{repo: repo}
+func NewProductService(repo repository.Product, fileService fileservice.FileService) *ProductService {
+	return &ProductService{repo: repo, fileService: fileService}
 }
 
 func (s *ProductService) Create(data *model.CreateProduct) (*model.Product, error) {
@@ -68,4 +76,28 @@ func (s *ProductService) Delete(id int) (*model.Product, error) {
 		return nil, err
 	}
 	return dbModel, nil
+}
+
+func (s *ProductService) UploadPhoto(id int, file multipart.File, fileHeader *multipart.FileHeader) (*model.Product, error) {
+	filePrefix := s.getFilePrefix(id)
+	filePath, err := s.fileService.UploadFile(filePrefix, file, fileHeader)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.repo.UpdatePhoto(id, &filePath); err != nil {
+		return nil, err
+	}
+	return s.repo.GetById(id)
+}
+
+func (s *ProductService) DeletePhoto(id int) (*model.Product, error) {
+	if err := s.repo.UpdatePhoto(id, nil); err != nil {
+		return nil, err
+	}
+	return s.repo.GetById(id)
+}
+
+func (s *ProductService) getFilePrefix(id int) string {
+	filePrefix := fmt.Sprintf("/%s/%d", fileCategory, id)
+	return filePrefix
 }

@@ -156,6 +156,11 @@ func (r *ProductRepository) Update(id int, data *model.UpdateProduct) error {
 	return err
 }
 
+func (r *ProductRepository) UpdatePhoto(id int, photo *string) error {
+	_, err := r.db.Exec("update product set photo=$1 where id=$2", photo, id)
+	return err
+}
+
 func (r *ProductRepository) Delete(id int) error {
 	_, err := r.db.Exec("delete from product where id=$1", id)
 	return err

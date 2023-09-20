@@ -8,3 +8,8 @@ access_token_ttl = 24
 token_secret = "asdfasdfasdfasdfasfd"
 admin_access_token_ttl = 24
 admin_token_secret = "qweqweqweqweqweqweqweqweqweqweqeqwe"
+
+minio_endpoint = "localhost:9004"
+minio_access_key = "root"
+minio_secret_key = "changeme"
+minio_use_ssl = false

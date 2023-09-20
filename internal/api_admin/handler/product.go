@@ -166,3 +166,63 @@ func (h *Handler) handlerDeleteProduct() http.HandlerFunc {
 		response.Respond(w, r, http.StatusOK, product)
 	}
 }
+
+// @Summary Upload photo
+// @Tags Product
+// @Security ApiKeyAuth
+// @Description Upload product photo
+// @ID upload-product-photo
+// @Accept			multipart/form-data
+// @Produce  json
+// @Param id path int true "Product id"
+// @Param	photo formData file	 true "this is a test file"
+// @Success 200 {object} model.Product
+// @Failure default {object} response.ErrorResponse
+// @Router /v1/product/{id}/photo [post]
+func (h *Handler) uploadPhotoHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusOK, err)
+			return
+		}
+		file, fileHeader, err := r.FormFile("photo")
+		if err != nil {
+			response.Respond(w, r, http.StatusInternalServerError, err)
+		}
+		defer file.Close()
+		product, err := h.service.ProductService.UploadPhoto(id, file, fileHeader)
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			return
+		}
+		response.Respond(w, r, http.StatusOK, product)
+	}
+}
+
+// @Summary Delete photo
+// @Tags Product
+// @Security ApiKeyAuth
+// @Description Delete product photo
+// @ID delete-product-photo
+// @Produce  json
+// @Param id path int true "Product id"
+// @Success 200 {object} model.Product
+// @Router /v1/product/{id}/photo [delete]
+func (h *Handler) deletePhotoHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusOK, err)
+			return
+		}
+		product, err := h.service.ProductService.DeletePhoto(id)
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			return
+		}
+		response.Respond(w, r, http.StatusOK, product)
+	}
+}
