@@ -22,6 +22,11 @@ type Config struct {
 
 	AdminAccessTokenTTL int    `toml:"admin_access_token_ttl"`
 	AdminTokenSecret    string `toml:"admin_token_secret"`
+
+	MinioEndpoint  string `toml:"minio_endpoint"`
+	MinioAccessKey string `toml:"minio_access_key"`
+	MinioSecretKey string `toml:"minio_secret_key"`
+	MinioUseSSL    bool   `toml:"minio_use_ssl"`
 }
 
 // initConfig ...
