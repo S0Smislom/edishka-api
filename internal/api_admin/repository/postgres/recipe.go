@@ -47,6 +47,7 @@ func (r *RecipeRepository) GetById(id int) (*model.Recipe, error) {
 		return nil, err
 	}
 	p.Products = r.getRecipeProduct(id)
+	p.Gallery = r.getRecipeGallery(id)
 	return p, nil
 }
 
@@ -71,6 +72,7 @@ func (r *RecipeRepository) GetList(limit, offset int, filters *model.RecipeFilte
 			continue
 		}
 		p.Products = r.getRecipeProduct(p.Id)
+		p.Gallery = r.getRecipeGallery(p.Id)
 		recipes = append(recipes, p)
 	}
 	return recipes, nil
@@ -192,7 +194,6 @@ func (r *RecipeRepository) scan(row interface {
 		&p.DifficultyLevel,
 		&p.CreatedAt,
 		&p.UpdatedAt,
-		&p.Photo,
 		&p.Published,
 		&p.Calories,
 		&p.Squirrels,
@@ -217,7 +218,6 @@ func (r *RecipeRepository) querySelect() string {
 			r.difficulty_level,
 			r.created_at,
 			r.updated_at,
-			r.photo,
 			r.published,
 			sum(coalesce(sp.amount, 0) * coalesce(p.calories, 0)/100),
 			sum(coalesce(sp.amount, 0) * coalesce(p.fats, 0)/100),
@@ -286,4 +286,31 @@ func (r *RecipeRepository) getRecipeProduct(recipeId int) []*model.RecipeProduct
 		products = append(products, p)
 	}
 	return products
+}
+
+func (r *RecipeRepository) getRecipeGallery(recipeId int) []*model.RecipeGalleryMinimal {
+	gallery := []*model.RecipeGalleryMinimal{}
+	rows, err := r.db.Query(
+		"select id, ordering, created_at, updated_at, photo, published from recipe_gallery where recipe_id=$1",
+		recipeId,
+	)
+	if err != nil {
+		return gallery
+	}
+	defer rows.Close()
+	for rows.Next() {
+		p := &model.RecipeGalleryMinimal{}
+		if err := rows.Scan(
+			&p.Id,
+			&p.Ordering,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&p.Photo,
+			&p.Published,
+		); err != nil {
+			continue
+		}
+		gallery = append(gallery, p)
+	}
+	return gallery
 }

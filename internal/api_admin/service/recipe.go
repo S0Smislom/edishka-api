@@ -3,6 +3,11 @@ package service
 import (
 	"food/internal/api_admin/model"
 	"food/internal/api_admin/repository"
+	fileservice "food/internal/file_service"
+)
+
+const (
+	recipeFileCategory = "recipe"
 )
 
 type RecipeService struct {
@@ -10,6 +15,7 @@ type RecipeService struct {
 	recipeStepRepo  repository.RecipeStep
 	productRepo     repository.Product
 	stepProductRepo repository.StepProduct
+	fileService     fileservice.FileService
 }
 
 func NewRecipeService(
@@ -17,12 +23,14 @@ func NewRecipeService(
 	recipeStepRepo repository.RecipeStep,
 	stepProductRepo repository.StepProduct,
 	productRepo repository.Product,
+	fileService fileservice.FileService,
 ) *RecipeService {
 	return &RecipeService{
 		repo:            repo,
 		recipeStepRepo:  recipeStepRepo,
 		stepProductRepo: stepProductRepo,
 		productRepo:     productRepo,
+		fileService:     fileService,
 	}
 }
 

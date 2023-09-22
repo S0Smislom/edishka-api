@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"food/internal/api_admin/model"
 	"food/pkg/response"
 	"net/http"
@@ -85,8 +84,6 @@ func (h *Handler) handlerGetStepProductList() http.HandlerFunc {
 		req := &model.StepProductFilter{}
 		decoder := schema.NewDecoder()
 		decoder.Decode(req, r.URL.Query())
-
-		fmt.Println(req)
 
 		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 		if err != nil {

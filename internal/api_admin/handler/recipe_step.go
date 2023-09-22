@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"food/internal/api_admin/model"
 	"food/pkg/response"
 	"net/http"
@@ -86,8 +85,6 @@ func (h *Handler) handlerGetRecipeStepList() http.HandlerFunc {
 		decoder := schema.NewDecoder()
 		decoder.Decode(req, r.URL.Query())
 
-		fmt.Println(req)
-
 		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 		if err != nil {
 			limit = 25
@@ -164,5 +161,65 @@ func (h *Handler) handlerDeleteRecipeStep() http.HandlerFunc {
 			return
 		}
 		response.Respond(w, r, http.StatusOK, RecipeStep)
+	}
+}
+
+// @Summary Upload photo
+// @Tags RecipeStep
+// @Security ApiKeyAuth
+// @Description Upload recipe step photo
+// @ID upload-recipe-step-photo
+// @Accept			multipart/form-data
+// @Produce  json
+// @Param id path int true "recipeStep id"
+// @Param	photo formData file	 true "this is a test file"
+// @Success 200 {object} model.RecipeStep
+// @Failure default {object} response.ErrorResponse
+// @Router /v1/recipe-step/{id}/photo [post]
+func (h *Handler) uploadRecipeStepPhotoHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusOK, err)
+			return
+		}
+		file, fileHeader, err := r.FormFile("photo")
+		if err != nil {
+			response.Respond(w, r, http.StatusInternalServerError, err)
+		}
+		defer file.Close()
+		product, err := h.service.RecipeStepService.UploadPhoto(id, file, fileHeader)
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			return
+		}
+		response.Respond(w, r, http.StatusOK, product)
+	}
+}
+
+// @Summary Delete photo
+// @Tags RecipeStep
+// @Security ApiKeyAuth
+// @Description Delete recipe step photo
+// @ID delete-recipe-step-photo
+// @Produce  json
+// @Param id path int true "recipe step id"
+// @Success 200 {object} model.RecipeStep
+// @Router /v1/recipe-step/{id}/photo [delete]
+func (h *Handler) deleteRecipeStepPhotoHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id, err := strconv.Atoi(vars["id"])
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusOK, err)
+			return
+		}
+		product, err := h.service.RecipeStepService.DeletePhoto(id)
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			return
+		}
+		response.Respond(w, r, http.StatusOK, product)
 	}
 }

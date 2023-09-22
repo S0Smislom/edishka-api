@@ -16,6 +16,13 @@ definitions:
         type: number
       title:
         type: string
+    required:
+    - calories
+    - carbohydrates
+    - fats
+    - slug
+    - squirrels
+    - title
     type: object
   model.CreateRecipe:
     properties:
@@ -34,6 +41,12 @@ definitions:
         type: string
       title:
         type: string
+    required:
+    - cooking_time
+    - difficulty_level
+    - kitchen
+    - slug
+    - title
     type: object
   model.CreateRecipeStep:
     properties:
@@ -146,6 +159,10 @@ definitions:
         $ref: '#/definitions/model.DifficultyLevel'
       fats:
         type: number
+      gallery:
+        items:
+          $ref: '#/definitions/model.RecipeGalleryMinimal'
+        type: array
       id:
         type: integer
       kitchen:
@@ -167,6 +184,38 @@ definitions:
         type: number
       title:
         type: string
+      updated_at:
+        type: string
+    type: object
+  model.RecipeGallery:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      ordering:
+        type: integer
+      photo:
+        type: string
+      published:
+        type: boolean
+      recipe_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  model.RecipeGalleryMinimal:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      ordering:
+        type: integer
+      photo:
+        type: string
+      published:
+        type: boolean
       updated_at:
         type: string
     type: object
@@ -315,6 +364,13 @@ definitions:
         type: string
       title:
         type: string
+    type: object
+  model.UpdateRecipeGallery:
+    properties:
+      ordering:
+        type: integer
+      published:
+        type: boolean
     type: object
   model.UpdateRecipeStep:
     properties:
@@ -722,6 +778,105 @@ paths:
       summary: Create recipe
       tags:
       - Recipe
+  /v1/recipe-gallery:
+    post:
+      consumes:
+      - application/json
+      description: Create RecipeGallery
+      operationId: create-recipe-step
+      parameters:
+      - in: formData
+        name: ordering
+        type: integer
+      - in: formData
+        name: published
+        type: boolean
+      - in: formData
+        name: recipe_id
+        required: true
+        type: integer
+      - description: this is a test file
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeGallery'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create RecipeGallery
+      tags:
+      - RecipeGallery
+  /v1/recipe-gallery/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete recipe gallery
+      operationId: delete-recipe-gallery
+      parameters:
+      - description: Recipe gallery id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeGallery'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete recipe gallery
+      tags:
+      - RecipeGallery
+    patch:
+      consumes:
+      - application/json
+      description: Update RecipeGallery
+      operationId: update-recipe-step
+      parameters:
+      - description: Recipe gallery update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateRecipeGallery'
+      - description: Recipe id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeGallery'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update RecipeGallery
+      tags:
+      - RecipeGallery
   /v1/recipe-step:
     get:
       consumes:
@@ -876,6 +1031,60 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update RecipeStep
+      tags:
+      - RecipeStep
+  /v1/recipe-step/{id}/photo:
+    delete:
+      description: Delete recipe step photo
+      operationId: delete-recipe-step-photo
+      parameters:
+      - description: recipe step id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStep'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete photo
+      tags:
+      - RecipeStep
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload recipe step photo
+      operationId: upload-recipe-step-photo
+      parameters:
+      - description: recipeStep id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: this is a test file
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RecipeStep'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upload photo
       tags:
       - RecipeStep
   /v1/recipe/{id}:

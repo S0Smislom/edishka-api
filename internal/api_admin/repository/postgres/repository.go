@@ -11,6 +11,7 @@ type Repository struct {
 	*ProductRepository
 	*RecipeRepository
 	*RecipeStepRepository
+	*RecipeGalleryRepository
 	*StepProductRepository
 }
 
@@ -44,6 +45,12 @@ func (r *Repository) RecipeStep() repository.RecipeStep {
 		r.RecipeStepRepository = NewRecipeStepRepository(r.db)
 	}
 	return r.RecipeStepRepository
+}
+func (r *Repository) RecipeGallery() repository.RecipeGallery {
+	if r.RecipeGalleryRepository == nil {
+		r.RecipeGalleryRepository = NewRecipeGalleryRepository(r.db)
+	}
+	return r.RecipeGalleryRepository
 }
 
 func (r *Repository) StepProduct() repository.StepProduct {

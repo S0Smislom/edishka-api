@@ -30,7 +30,8 @@ type Recipe struct {
 	Fats          float64 `json:"fats"`
 	Carbohydrates float64 `json:"carbohydrates"`
 
-	Products []*RecipeProduct `json:"products"`
+	Products []*RecipeProduct        `json:"products"`
+	Gallery  []*RecipeGalleryMinimal `json:"gallery"`
 }
 
 type RecipeProduct struct {
@@ -38,16 +39,24 @@ type RecipeProduct struct {
 	Amount int `json:"amount"`
 }
 
+type RecipeGalleryMinimal struct {
+	Base
+	Timestamp
+	Ordering  int    `json:"ordering"`
+	Published bool   `json:"published"`
+	Photo     string `json:"photo"`
+}
+
 type CreateRecipe struct {
-	Title       string  `json:"title"`
-	Slug        string  `json:"slug"`
+	Title       string  `json:"title" binding:"required"`
+	Slug        string  `json:"slug" binding:"required"`
 	Description *string `json:"description"`
 
-	CookingTime   int  `json:"cooking_time"`
+	CookingTime   int  `json:"cooking_time" binding:"required"`
 	PreparingTime *int `json:"preparing_time"`
 	// TODO Вынести в отдельную таблицу
-	Kitchen         string          `json:"kitchen"`
-	DifficultyLevel DifficultyLevel `json:"difficulty_level"`
+	Kitchen         string          `json:"kitchen" binding:"required"`
+	DifficultyLevel DifficultyLevel `json:"difficulty_level" binding:"required"`
 }
 
 func (m CreateRecipe) Validate() error {
