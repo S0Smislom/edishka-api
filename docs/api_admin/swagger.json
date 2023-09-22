@@ -569,6 +569,161 @@
                 }
             }
         },
+        "/v1/recipe-gallery": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create RecipeGallery",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeGallery"
+                ],
+                "summary": "Create RecipeGallery",
+                "operationId": "create-recipe-step",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "ordering",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "published",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "recipe_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "this is a test file",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeGallery"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/recipe-gallery/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete recipe gallery",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeGallery"
+                ],
+                "summary": "Delete recipe gallery",
+                "operationId": "delete-recipe-gallery",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Recipe gallery id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeGallery"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update RecipeGallery",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeGallery"
+                ],
+                "summary": "Update RecipeGallery",
+                "operationId": "update-recipe-step",
+                "parameters": [
+                    {
+                        "description": "Recipe gallery update data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateRecipeGallery"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Recipe id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeGallery"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/recipe-step": {
             "get": {
                 "security": [
@@ -807,6 +962,90 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/recipe-step/{id}/photo": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Upload recipe step photo",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Upload photo",
+                "operationId": "upload-recipe-step-photo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "recipeStep id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "this is a test file",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStep"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete recipe step photo",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RecipeStep"
+                ],
+                "summary": "Delete photo",
+                "operationId": "delete-recipe-step-photo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "recipe step id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RecipeStep"
                         }
                     }
                 }
@@ -1245,6 +1484,14 @@
     "definitions": {
         "model.CreateProduct": {
             "type": "object",
+            "required": [
+                "calories",
+                "carbohydrates",
+                "fats",
+                "slug",
+                "squirrels",
+                "title"
+            ],
             "properties": {
                 "calories": {
                     "type": "integer"
@@ -1271,6 +1518,13 @@
         },
         "model.CreateRecipe": {
             "type": "object",
+            "required": [
+                "cooking_time",
+                "difficulty_level",
+                "kitchen",
+                "slug",
+                "title"
+            ],
             "properties": {
                 "cooking_time": {
                     "type": "integer"
@@ -1461,6 +1715,12 @@
                 "fats": {
                     "type": "number"
                 },
+                "gallery": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.RecipeGalleryMinimal"
+                    }
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1491,6 +1751,55 @@
                 },
                 "title": {
                     "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RecipeGallery": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ordering": {
+                    "type": "integer"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "boolean"
+                },
+                "recipe_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RecipeGalleryMinimal": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ordering": {
+                    "type": "integer"
+                },
+                "photo": {
+                    "type": "string"
+                },
+                "published": {
+                    "type": "boolean"
                 },
                 "updated_at": {
                     "type": "string"
@@ -1714,6 +2023,17 @@
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "model.UpdateRecipeGallery": {
+            "type": "object",
+            "properties": {
+                "ordering": {
+                    "type": "integer"
+                },
+                "published": {
+                    "type": "boolean"
                 }
             }
         },

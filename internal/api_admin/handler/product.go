@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"food/internal/api_admin/model"
 	"food/pkg/response"
 	"net/http"
@@ -85,8 +84,6 @@ func (h *Handler) handlerGetProductList() http.HandlerFunc {
 		req := &model.ProductFilter{}
 		decoder := schema.NewDecoder()
 		decoder.Decode(req, r.URL.Query())
-
-		fmt.Println(req)
 
 		limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 		if err != nil {
@@ -179,7 +176,7 @@ func (h *Handler) handlerDeleteProduct() http.HandlerFunc {
 // @Success 200 {object} model.Product
 // @Failure default {object} response.ErrorResponse
 // @Router /v1/product/{id}/photo [post]
-func (h *Handler) uploadPhotoHandler() http.HandlerFunc {
+func (h *Handler) uploadProductPhotoHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
@@ -210,7 +207,7 @@ func (h *Handler) uploadPhotoHandler() http.HandlerFunc {
 // @Param id path int true "Product id"
 // @Success 200 {object} model.Product
 // @Router /v1/product/{id}/photo [delete]
-func (h *Handler) deletePhotoHandler() http.HandlerFunc {
+func (h *Handler) deleteProductPhotoHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])

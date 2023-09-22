@@ -19,9 +19,9 @@ type User struct {
 }
 
 type CreateUser struct {
-	Phone       string `json:"phone"`
-	Password    string `json:"password"`
-	Password2   string `json:"password2"`
+	Phone       string `json:"phone" binding:"required"`
+	Password    string `json:"password" binding:"required"`
+	Password2   string `json:"password2" binding:"required"`
 	IsSuperuser *bool  `json:"is_superuser"`
 	IsStaff     *bool  `json:"is_staff"`
 }

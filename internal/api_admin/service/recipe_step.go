@@ -1,16 +1,24 @@
 package service
 
 import (
+	"fmt"
 	"food/internal/api_admin/model"
 	"food/internal/api_admin/repository"
+	fileservice "food/internal/file_service"
+	"mime/multipart"
+)
+
+const (
+	recipeStepFileCategory = "recipe-step"
 )
 
 type RecipeStepService struct {
-	repo repository.RecipeStep
+	repo        repository.RecipeStep
+	fileService fileservice.FileService
 }
 
-func NewRecipeStepService(repo repository.RecipeStep) *RecipeStepService {
-	return &RecipeStepService{repo: repo}
+func NewRecipeStepService(repo repository.RecipeStep, fileService fileservice.FileService) *RecipeStepService {
+	return &RecipeStepService{repo: repo, fileService: fileService}
 }
 
 func (s *RecipeStepService) Create(data *model.CreateRecipeStep) (*model.RecipeStep, error) {
@@ -68,4 +76,33 @@ func (s *RecipeStepService) Delete(id int) (*model.RecipeStep, error) {
 		return nil, err
 	}
 	return dbModel, nil
+}
+
+func (s *RecipeStepService) UploadPhoto(id int, file multipart.File, fileHeader *multipart.FileHeader) (*model.RecipeStep, error) {
+	dbModel, err := s.GetById(id)
+	if err != nil {
+		return nil, err
+	}
+	filePrefix := s.getFilePrefix(dbModel.Id)
+	filePath, err := s.fileService.UploadFile(filePrefix, file, fileHeader)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.repo.UpdatePhoto(id, &filePath); err != nil {
+		return nil, err
+	}
+	dbModel.Photo = &filePath
+	return dbModel, nil
+}
+
+func (s *RecipeStepService) DeletePhoto(id int) (*model.RecipeStep, error) {
+	if err := s.repo.UpdatePhoto(id, nil); err != nil {
+		return nil, err
+	}
+	return s.repo.GetById(id)
+}
+
+func (s *RecipeStepService) getFilePrefix(id int) string {
+	filePrefix := fmt.Sprintf("/%s/%d", recipeStepFileCategory, id)
+	return filePrefix
 }

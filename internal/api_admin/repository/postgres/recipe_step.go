@@ -136,6 +136,11 @@ func (r *RecipeStepRepository) Delete(id int) error {
 	return err
 }
 
+func (r *RecipeStepRepository) UpdatePhoto(id int, photo *string) error {
+	_, err := r.db.Exec("update recipe_step set photo=$1 where id=$2", photo, id)
+	return err
+}
+
 func (r *RecipeStepRepository) prepareFilters(query string, filters *model.RecipeStepFilter) (string, []interface{}, error) {
 	var filterValues []interface{}
 	var filterQuery []string

@@ -34,6 +34,16 @@ type RecipeStep interface {
 	Count(filters *model.RecipeStepFilter) (int, error)
 	Update(id int, data *model.UpdateRecipeStep) error
 	Delete(id int) error
+	UpdatePhoto(id int, photo *string) error
+}
+
+type RecipeGallery interface {
+	Create(data *model.CreateRecipeGallery) (int, error)
+	GetById(id int) (*model.RecipeGallery, error)
+	GetList(limit, offset int, filters *model.RecipeGalleryFilter) ([]*model.RecipeGallery, error)
+	Count(filters *model.RecipeGalleryFilter) (int, error)
+	Update(id int, data *model.UpdateRecipeGallery) error
+	Delete(id int) error
 }
 
 type StepProduct interface {
@@ -50,5 +60,6 @@ type Repository interface {
 	Product() Product
 	Recipe() Recipe
 	RecipeStep() RecipeStep
+	RecipeGallery() RecipeGallery
 	StepProduct() StepProduct
 }

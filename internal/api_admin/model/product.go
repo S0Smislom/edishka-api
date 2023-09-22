@@ -23,15 +23,15 @@ type ProductList struct {
 }
 
 type CreateProduct struct {
-	Title       string  `json:"title"`
-	Slug        string  `json:"slug"`
+	Title       string  `json:"title" binding:"required"`
+	Slug        string  `json:"slug" binding:"required"`
 	Description *string `json:"description"`
 	// Photo       *string `json:"photo"`
 
-	Calories      int     `json:"calories"`
-	Squirrels     float64 `json:"squirrels"`
-	Fats          float64 `json:"fats"`
-	Carbohydrates float64 `json:"carbohydrates"`
+	Calories      int     `json:"calories" binding:"required"`
+	Squirrels     float64 `json:"squirrels" binding:"required"`
+	Fats          float64 `json:"fats" binding:"required"`
+	Carbohydrates float64 `json:"carbohydrates" binding:"required"`
 }
 
 func (m CreateProduct) Validate() error {

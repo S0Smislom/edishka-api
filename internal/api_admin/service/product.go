@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	fileCategory = "product"
+	productFileCategory = "product"
 )
 
 type ProductService struct {
@@ -79,7 +79,11 @@ func (s *ProductService) Delete(id int) (*model.Product, error) {
 }
 
 func (s *ProductService) UploadPhoto(id int, file multipart.File, fileHeader *multipart.FileHeader) (*model.Product, error) {
-	filePrefix := s.getFilePrefix(id)
+	dbModel, err := s.GetById(id)
+	if err != nil {
+		return nil, err
+	}
+	filePrefix := s.getFilePrefix(dbModel.Slug)
 	filePath, err := s.fileService.UploadFile(filePrefix, file, fileHeader)
 	if err != nil {
 		return nil, err
@@ -87,7 +91,8 @@ func (s *ProductService) UploadPhoto(id int, file multipart.File, fileHeader *mu
 	if err := s.repo.UpdatePhoto(id, &filePath); err != nil {
 		return nil, err
 	}
-	return s.repo.GetById(id)
+	dbModel.Photo = &filePath
+	return dbModel, nil
 }
 
 func (s *ProductService) DeletePhoto(id int) (*model.Product, error) {
@@ -97,7 +102,7 @@ func (s *ProductService) DeletePhoto(id int) (*model.Product, error) {
 	return s.repo.GetById(id)
 }
 
-func (s *ProductService) getFilePrefix(id int) string {
-	filePrefix := fmt.Sprintf("/%s/%d", fileCategory, id)
+func (s *ProductService) getFilePrefix(slug string) string {
+	filePrefix := fmt.Sprintf("/%s/%s", productFileCategory, slug)
 	return filePrefix
 }

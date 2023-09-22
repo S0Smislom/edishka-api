@@ -14,6 +14,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	defaultMaxMemory = 32 << 20 // 32 MB
+)
+
 type Handler struct {
 	config  *config.Config
 	service *service.Service
@@ -49,8 +53,8 @@ func (h *Handler) InitRoutes() http.Handler {
 	// TODO Подумать про метод put, мб будет проще с ним
 	product.HandleFunc("/{id:[0-9]+}", h.handlerUpdateProduct()).Methods(http.MethodPatch)
 	product.HandleFunc("/{id:[0-9]+}", h.handlerDeleteProduct()).Methods(http.MethodDelete)
-	product.HandleFunc("/{id:[0-9]+}/photo", h.uploadPhotoHandler()).Methods(http.MethodPost)
-	product.HandleFunc("/{id:[0-9]+}/photo", h.deletePhotoHandler()).Methods(http.MethodDelete)
+	product.HandleFunc("/{id:[0-9]+}/photo", h.uploadProductPhotoHandler()).Methods(http.MethodPost)
+	product.HandleFunc("/{id:[0-9]+}/photo", h.deleteProductPhotoHandler()).Methods(http.MethodDelete)
 
 	// Recipe
 	recipe := api.PathPrefix("/recipe").Subrouter()
@@ -67,6 +71,14 @@ func (h *Handler) InitRoutes() http.Handler {
 	recipeStep.HandleFunc("/{id:[0-9]+}", h.handlerGetRecipeStepById()).Methods(http.MethodGet)
 	recipeStep.HandleFunc("/{id:[0-9]+}", h.handlerUpdateRecipeStep()).Methods(http.MethodPatch)
 	recipeStep.HandleFunc("/{id:[0-9]+}", h.handlerDeleteRecipeStep()).Methods(http.MethodDelete)
+	recipeStep.HandleFunc("/{id:[0-9]+}/photo", h.uploadRecipeStepPhotoHandler()).Methods(http.MethodPost)
+	recipeStep.HandleFunc("/{id:[0-9]+}/photo", h.deleteRecipeStepPhotoHandler()).Methods(http.MethodDelete)
+
+	// RecipeGallery
+	recipeGallery := api.PathPrefix("/recipe-gallery").Subrouter()
+	recipeGallery.HandleFunc("", h.createRecipeGalleryPhotoHandler()).Methods(http.MethodPost)
+	recipeGallery.HandleFunc("/{id:[0-9]+}", h.updateRecipeGalleryPhotoHandler()).Methods(http.MethodPatch)
+	recipeGallery.HandleFunc("/{id:[0-9]+}", h.deleteRecipeGalleryPhotoHandler()).Methods(http.MethodDelete)
 
 	// StepProduct
 	stepProduct := api.PathPrefix("/step-product").Subrouter()
