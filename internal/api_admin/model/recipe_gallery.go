@@ -7,6 +7,7 @@ import (
 type RecipeGallery struct {
 	Base
 	Timestamp
+	Creator
 	Ordering  int    `json:"ordering"`
 	Published bool   `json:"published"`
 	Photo     string `json:"photo"`
@@ -25,6 +26,8 @@ type CreateRecipeGallery struct {
 	Published *bool  `json:"published" schema:"published"`
 	Ordering  int    `json:"ordering" schema:"ordering"`
 	Photo     string `json:"-"`
+
+	CreatedById int `json:"-" schema:"-"`
 }
 
 func (m *CreateRecipeGallery) Validate() error {
@@ -41,6 +44,8 @@ func (m *CreateRecipeGallery) Validate() error {
 type UpdateRecipeGallery struct {
 	Published *bool `json:"published"`
 	Ordering  *int  `json:"ordering"`
+
+	UpdatedById *int `json:"-"`
 }
 
 func (m UpdateRecipeGallery) Validate() error {

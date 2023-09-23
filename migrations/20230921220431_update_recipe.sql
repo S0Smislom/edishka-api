@@ -8,7 +8,9 @@ CREATE TABLE if not EXISTS "recipe_gallery" (
     "ordering" INT NOT NULL DEFAULT 0,
     "published" BOOLEAN NOT NULL DEFAULT TRUE,
     "photo" VARCHAR(255),
-    "recipe_id" INT NOT NULL REFERENCES "recipe" ("id") ON DELETE CASCADE
+    "recipe_id" INT NOT NULL REFERENCES "recipe" ("id") ON DELETE CASCADE,
+    "created_by_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "updated_by_id" INT REFERENCES "user" ("id") ON DELETE CASCADE
 );
 -- +goose StatementEnd
 

@@ -11,6 +11,7 @@ const (
 type Recipe struct {
 	Base
 	Timestamp
+	Creator
 
 	Title       string  `json:"title"`
 	Slug        string  `json:"slug"`
@@ -57,6 +58,8 @@ type CreateRecipe struct {
 	// TODO Вынести в отдельную таблицу
 	Kitchen         string          `json:"kitchen" binding:"required"`
 	DifficultyLevel DifficultyLevel `json:"difficulty_level" binding:"required"`
+
+	CreatedById int `json:"-"`
 }
 
 func (m CreateRecipe) Validate() error {
@@ -74,6 +77,8 @@ type UpdateRecipe struct {
 	Kitchen         *string          `json:"kitchen"`
 	DifficultyLevel *DifficultyLevel `json:"difficulty_level"`
 	Published       *bool            `json:"published"`
+
+	UpdatedById *int `json:"-"`
 }
 
 func (m UpdateRecipe) Validate() error {

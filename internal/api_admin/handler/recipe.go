@@ -29,6 +29,7 @@ func (h *Handler) handlerCreateRecipe() http.HandlerFunc {
 			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
+		req.CreatedById = r.Context().Value(userCtx).(int)
 		recipe, err := h.service.RecipeService.Create(req)
 		if err != nil {
 			response.ErrorRespond(w, r, http.StatusBadRequest, err)
@@ -127,6 +128,8 @@ func (h *Handler) handlerUpdateRecipe() http.HandlerFunc {
 			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
+		userId := r.Context().Value(userCtx).(int)
+		data.UpdatedById = &userId
 		recipe, err := h.service.RecipeService.Update(id, data)
 		if err != nil {
 			response.ErrorRespond(w, r, http.StatusBadRequest, err)

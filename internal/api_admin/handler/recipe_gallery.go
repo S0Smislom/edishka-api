@@ -36,7 +36,7 @@ func (h *Handler) createRecipeGalleryPhotoHandler() http.HandlerFunc {
 			return
 		}
 		defer file.Close()
-
+		data.CreatedById = r.Context().Value(userCtx).(int)
 		recipeGalleryPhoto, err := h.service.RecipeGalleryService.Create(
 			data,
 			file,
@@ -76,6 +76,8 @@ func (h *Handler) updateRecipeGalleryPhotoHandler() http.HandlerFunc {
 			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
+		userId := r.Context().Value(userCtx).(int)
+		data.UpdatedById = &userId
 		recipeGalleryPhoto, err := h.service.RecipeGalleryService.Update(id, data)
 		if err != nil {
 			response.ErrorRespond(w, r, http.StatusBadRequest, err)

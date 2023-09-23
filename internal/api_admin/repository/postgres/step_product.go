@@ -21,10 +21,11 @@ func NewStepProductRepository(db *sql.DB) *StepProductRepository {
 func (r *StepProductRepository) Create(data *model.CreateStepProduct) (int, error) {
 	var id int
 	row := r.db.QueryRow(
-		"INSERT INTO step_product (recipe_step_id, product_id, amount) values ($1, $2, $3) RETURNING id",
+		"INSERT INTO step_product (recipe_step_id, product_id, amount, created_by_id) values ($1, $2, $3, $4) RETURNING id",
 		data.RecipeStepId,
 		data.ProductId,
 		data.Amount,
+		data.CreatedById,
 	)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
@@ -35,7 +36,7 @@ func (r *StepProductRepository) Create(data *model.CreateStepProduct) (int, erro
 func (r *StepProductRepository) GetById(id int) (*model.StepProduct, error) {
 	p := &model.StepProduct{}
 	if err := r.db.QueryRow(
-		"select id, recipe_step_id, product_id, amount, created_at, updated_at from step_product where id=$1",
+		"select id, recipe_step_id, product_id, amount, created_at, updated_at, created_by_id, updated_by_id from step_product where id=$1",
 		id,
 	).Scan(
 		&p.Id,
@@ -44,6 +45,8 @@ func (r *StepProductRepository) GetById(id int) (*model.StepProduct, error) {
 		&p.Amount,
 		&p.CreatedAt,
 		&p.UpdatedAt,
+		&p.CreatedById,
+		&p.UpdatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("StepProduct not found")
@@ -54,7 +57,7 @@ func (r *StepProductRepository) GetById(id int) (*model.StepProduct, error) {
 }
 
 func (r *StepProductRepository) GetList(limit, offset int, filters *model.StepProductFilter) ([]*model.StepProduct, error) {
-	tempQuery := "select id, recipe_step_id, product_id, amount, created_at, updated_at from step_product"
+	tempQuery := "select id, recipe_step_id, product_id, amount, created_at, updated_at, created_by_id, updated_by_id from step_product"
 	query, values, err := r.prepareFilters(tempQuery, filters)
 	if err != nil {
 		return nil, err
@@ -76,6 +79,8 @@ func (r *StepProductRepository) GetList(limit, offset int, filters *model.StepPr
 			&p.Amount,
 			&p.CreatedAt,
 			&p.UpdatedAt,
+			&p.CreatedById,
+			&p.UpdatedById,
 		); err != nil {
 			return nil, err
 		}
@@ -103,6 +108,8 @@ func (r *StepProductRepository) Update(id int, data *model.UpdateStepProduct) er
 	var queryValues []interface{}
 	queryValues = append(queryValues, time.Now())
 	queryParams = append(queryParams, "updated_at=$"+strconv.Itoa(len(queryValues)))
+	queryValues = append(queryValues, *data.UpdatedById)
+	queryParams = append(queryParams, "updated_by_id=$"+strconv.Itoa(len(queryValues)))
 	if data.Amount != nil {
 		queryValues = append(queryValues, *data.Amount)
 		queryParams = append(queryParams, "amount=$"+strconv.Itoa(len(queryValues)))

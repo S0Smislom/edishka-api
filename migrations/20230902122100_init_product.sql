@@ -11,7 +11,9 @@ CREATE TABLE IF NOT EXISTS "product" (
     "calories" INT NOT NULL,
     "squirrels" DOUBLE PRECISION NOT NULL,
     "fats" DOUBLE PRECISION NOT NULL,
-    "carbohydrates" DOUBLE PRECISION NOT NULL
+    "carbohydrates" DOUBLE PRECISION NOT NULL,
+    "created_by_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "updated_by_id" INT REFERENCES "user" ("id") ON DELETE CASCADE
 );
 -- +goose StatementEnd
 

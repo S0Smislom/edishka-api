@@ -29,6 +29,7 @@ func (h *Handler) handlerCreateProduct() http.HandlerFunc {
 			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
+		req.CreatedById = r.Context().Value(userCtx).(int)
 		product, err := h.service.ProductService.Create(req)
 		if err != nil {
 			response.ErrorRespond(w, r, http.StatusBadRequest, err)
@@ -127,6 +128,8 @@ func (h *Handler) handlerUpdateProduct() http.HandlerFunc {
 			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
 			return
 		}
+		userId := r.Context().Value(userCtx).(int)
+		data.UpdatedById = &userId
 		product, err := h.service.ProductService.Update(id, data)
 		if err != nil {
 			response.ErrorRespond(w, r, http.StatusBadRequest, err)
