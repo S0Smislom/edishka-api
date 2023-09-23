@@ -21,7 +21,7 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 func (r *ProductRepository) Create(data *model.CreateProduct) (int, error) {
 	var id int
 	row := r.db.QueryRow(
-		"INSERT INTO product (title, slug, description, calories, squirrels, fats, carbohydrates) values ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		"INSERT INTO product (title, slug, description, calories, squirrels, fats, carbohydrates, created_by_id) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		data.Title,
 		data.Slug,
 		data.Description,
@@ -29,6 +29,7 @@ func (r *ProductRepository) Create(data *model.CreateProduct) (int, error) {
 		data.Squirrels,
 		data.Fats,
 		data.Carbohydrates,
+		data.CreatedById,
 	)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
@@ -39,7 +40,7 @@ func (r *ProductRepository) Create(data *model.CreateProduct) (int, error) {
 func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 	p := &model.Product{}
 	if err := r.db.QueryRow(
-		"select id, title, slug, description, calories, squirrels, fats, carbohydrates, created_at, updated_at, photo from product where id=$1",
+		"select id, title, slug, description, calories, squirrels, fats, carbohydrates, created_at, updated_at, photo, created_by_id, updated_by_id from product where id=$1",
 		id,
 	).Scan(
 		&p.Id,
@@ -53,6 +54,8 @@ func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 		&p.CreatedAt,
 		&p.UpdatedAt,
 		&p.Photo,
+		&p.CreatedById,
+		&p.UpdatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("Product not found")
@@ -63,7 +66,7 @@ func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 }
 
 func (r *ProductRepository) GetList(limit, offset int, filters *model.ProductFilter) ([]*model.Product, error) {
-	tempQuery := "select id, title, slug, description, calories, squirrels, fats, carbohydrates, created_at, updated_at, photo from product"
+	tempQuery := "select id, title, slug, description, calories, squirrels, fats, carbohydrates, created_at, updated_at, photo, created_by_id, updated_by_id from product"
 	query, values, err := r.prepareFilters(tempQuery, filters)
 	if err != nil {
 		return nil, err
@@ -90,6 +93,8 @@ func (r *ProductRepository) GetList(limit, offset int, filters *model.ProductFil
 			&p.CreatedAt,
 			&p.UpdatedAt,
 			&p.Photo,
+			&p.CreatedById,
+			&p.UpdatedById,
 		); err != nil {
 			return nil, err
 		}
@@ -118,6 +123,8 @@ func (r *ProductRepository) Update(id int, data *model.UpdateProduct) error {
 	// TODO придумать более изящный способ обновления
 	queryValues = append(queryValues, time.Now())
 	queryParams = append(queryParams, "updated_at=$"+strconv.Itoa(len(queryValues)))
+	queryValues = append(queryValues, *data.UpdatedById)
+	queryParams = append(queryParams, "updated_by_id=$"+strconv.Itoa(len(queryValues)))
 	if data.Title != nil {
 		queryValues = append(queryValues, *data.Title)
 		queryParams = append(queryParams, "title=$"+strconv.Itoa(len(queryValues)))

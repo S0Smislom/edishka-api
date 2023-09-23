@@ -3,6 +3,8 @@ package model
 type StepProduct struct {
 	Base
 	Timestamp
+	Creator
+
 	RecipeStepId int      `json:"recipe_step_id" binding:"required"`
 	ProductId    int      `json:"-"`
 	Product      *Product `json:"product" binding:"required"`
@@ -13,6 +15,8 @@ type CreateStepProduct struct {
 	RecipeStepId int     `json:"recipe_step_id" binding:"required"`
 	ProductId    int     `json:"product_id" binding:"required"`
 	Amount       float64 `json:"amount" binding:"required"`
+
+	CreatedById int `json:"-"`
 }
 
 func (m *CreateStepProduct) Validate() error {
@@ -21,6 +25,8 @@ func (m *CreateStepProduct) Validate() error {
 
 type UpdateStepProduct struct {
 	Amount *float64 `json:"amount"`
+
+	UpdatedById *int `json:"-"`
 }
 
 func (m *UpdateStepProduct) Validate() error {

@@ -3,6 +3,7 @@ package model
 type Product struct {
 	Base
 	Timestamp
+	Creator
 
 	Title       string  `json:"title"`
 	Slug        string  `json:"slug"`
@@ -32,6 +33,8 @@ type CreateProduct struct {
 	Squirrels     float64 `json:"squirrels" binding:"required"`
 	Fats          float64 `json:"fats" binding:"required"`
 	Carbohydrates float64 `json:"carbohydrates" binding:"required"`
+
+	CreatedById int `json:"-"`
 }
 
 func (m CreateProduct) Validate() error {
@@ -48,6 +51,8 @@ type UpdateProduct struct {
 	Squirrels     *float64 `json:"squirrels"`
 	Fats          *float64 `json:"fats"`
 	Carbohydrates *float64 `json:"carbohydrates"`
+
+	UpdatedById *int `json:"-"`
 }
 
 func (m UpdateProduct) Validate() error {

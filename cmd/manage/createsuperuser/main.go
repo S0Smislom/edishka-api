@@ -51,14 +51,18 @@ func main() {
 	}
 	// TODO hide user input
 	fmt.Print("Password: ")
+	fmt.Print("\033[8m") // Hide input
 	if _, err := fmt.Scanln(&loginData.Password); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Print("\033[28m") // Show input
 	// TODO hide user input
 	fmt.Print("Password again: ")
+	fmt.Print("\033[8m") // Hide input
 	if _, err := fmt.Scanln(&loginData.Password2); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Print("\033[28m") // Show input
 	_, err = service.AuthService.Create(loginData)
 	if err != nil {
 		log.Fatal(err)

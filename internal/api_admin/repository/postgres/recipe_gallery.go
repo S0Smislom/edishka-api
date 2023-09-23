@@ -21,11 +21,12 @@ func NewRecipeGalleryRepository(db *sql.DB) *RecipeGalleryRepository {
 func (r *RecipeGalleryRepository) Create(data *model.CreateRecipeGallery) (int, error) {
 	var id int
 	row := r.db.QueryRow(
-		"insert into recipe_gallery (photo, recipe_id, published, ordering) values ($1, $2, $3, $4) returning id",
+		"insert into recipe_gallery (photo, recipe_id, published, ordering, created_by_id) values ($1, $2, $3, $4, $5) returning id",
 		data.Photo,
 		data.RecipeId,
 		data.Published,
 		data.Ordering,
+		data.CreatedById,
 	)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
@@ -36,7 +37,7 @@ func (r *RecipeGalleryRepository) Create(data *model.CreateRecipeGallery) (int, 
 func (r *RecipeGalleryRepository) GetById(id int) (*model.RecipeGallery, error) {
 	p := &model.RecipeGallery{}
 	if err := r.db.QueryRow(
-		"select id, ordering, recipe_id, created_at, updated_at, photo, published from recipe_gallery where id=$1",
+		"select id, ordering, recipe_id, created_at, updated_at, photo, published, created_by_id, updated_by_id from recipe_gallery where id=$1",
 		id,
 	).Scan(
 		&p.Id,
@@ -46,6 +47,8 @@ func (r *RecipeGalleryRepository) GetById(id int) (*model.RecipeGallery, error) 
 		&p.UpdatedAt,
 		&p.Photo,
 		&p.Published,
+		&p.CreatedById,
+		&p.UpdatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("RecipeGallery not found")
@@ -56,7 +59,7 @@ func (r *RecipeGalleryRepository) GetById(id int) (*model.RecipeGallery, error) 
 }
 
 func (r *RecipeGalleryRepository) GetList(limit, offset int, filters *model.RecipeGalleryFilter) ([]*model.RecipeGallery, error) {
-	tempQuery := "select id, ordering, recipe_id, created_at, updated_at, photo, published from recipe_gallery"
+	tempQuery := "select id, ordering, recipe_id, created_at, updated_at, photo, published, created_by_id, updated_by_id from recipe_gallery"
 	query, values, err := r.prepareFilters(tempQuery, filters)
 	if err != nil {
 		return nil, err
@@ -79,6 +82,8 @@ func (r *RecipeGalleryRepository) GetList(limit, offset int, filters *model.Reci
 			&p.UpdatedAt,
 			&p.Photo,
 			&p.Published,
+			&p.CreatedById,
+			&p.UpdatedById,
 		); err != nil {
 			return nil, err
 		}
@@ -107,6 +112,8 @@ func (r *RecipeGalleryRepository) Update(id int, data *model.UpdateRecipeGallery
 	// TODO придумать более изящный способ обновления
 	queryValues = append(queryValues, time.Now())
 	queryParams = append(queryParams, "updated_at=$"+strconv.Itoa(len(queryValues)))
+	queryValues = append(queryValues, *data.UpdatedById)
+	queryParams = append(queryParams, "updated_by_id=$"+strconv.Itoa(len(queryValues)))
 	if data.Published != nil {
 		queryValues = append(queryValues, *data.Published)
 		queryParams = append(queryParams, "published=$"+strconv.Itoa(len(queryValues)))

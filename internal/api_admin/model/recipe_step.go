@@ -3,6 +3,7 @@ package model
 type RecipeStep struct {
 	Base
 	Timestamp
+	Creator
 
 	Title       string  `json:"title"`
 	Description *string `json:"description"`
@@ -19,6 +20,8 @@ type CreateRecipeStep struct {
 
 	Ordering int `json:"ordering" binding:"required"`
 	RecipeId int `json:"recipeId" binding:"required"`
+
+	CreatedById int `json:"-"`
 }
 
 func (m CreateRecipeStep) Validate() error {
@@ -29,6 +32,7 @@ type UpdateRecipeStep struct {
 	Title       *string `json:"title"`
 	Description *string `json:"description"`
 	Ordering    *int    `json:"ordering"`
+	UpdatedById *int    `json:"-"`
 }
 
 func (m UpdateRecipeStep) Validate() error {

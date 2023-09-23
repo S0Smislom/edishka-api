@@ -21,7 +21,7 @@ func NewRecipeRepository(db *sql.DB) *RecipeRepository {
 func (r *RecipeRepository) Create(data *model.CreateRecipe) (int, error) {
 	var id int
 	row := r.db.QueryRow(
-		"INSERT INTO recipe (title, slug, description, cooking_time, preparing_time, kitchen, difficulty_level) values ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		"INSERT INTO recipe (title, slug, description, cooking_time, preparing_time, kitchen, difficulty_level, created_by_id) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		data.Title,
 		data.Slug,
 		data.Description,
@@ -29,6 +29,7 @@ func (r *RecipeRepository) Create(data *model.CreateRecipe) (int, error) {
 		data.PreparingTime,
 		data.Kitchen,
 		data.DifficultyLevel,
+		data.CreatedById,
 	)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
@@ -98,6 +99,8 @@ func (r *RecipeRepository) Update(id int, data *model.UpdateRecipe) error {
 	// TODO придумать более изящный способ обновления
 	queryValues = append(queryValues, time.Now())
 	queryParams = append(queryParams, "updated_at=$"+strconv.Itoa(len(queryValues)))
+	queryValues = append(queryValues, *data.UpdatedById)
+	queryParams = append(queryParams, "updated_by_id=$"+strconv.Itoa(len(queryValues)))
 	if data.Title != nil {
 		queryValues = append(queryValues, *data.Title)
 		queryParams = append(queryParams, "title=$"+strconv.Itoa(len(queryValues)))
@@ -199,6 +202,8 @@ func (r *RecipeRepository) scan(row interface {
 		&p.Squirrels,
 		&p.Fats,
 		&p.Carbohydrates,
+		&p.CreatedById,
+		&p.UpdatedById,
 	); err != nil {
 		return nil, err
 	}
@@ -222,7 +227,9 @@ func (r *RecipeRepository) querySelect() string {
 			sum(coalesce(sp.amount, 0) * coalesce(p.calories, 0)/100),
 			sum(coalesce(sp.amount, 0) * coalesce(p.fats, 0)/100),
 			sum(coalesce(sp.amount, 0) * coalesce(p.squirrels , 0)/100),
-			sum(coalesce(sp.amount, 0) * coalesce(p.carbohydrates , 0)/100)
+			sum(coalesce(sp.amount, 0) * coalesce(p.carbohydrates , 0)/100),
+			r.created_by_id,
+			r.updated_by_id
 		from recipe as r
 		left join recipe_step rs
 			left join step_product sp 
@@ -248,7 +255,9 @@ func (r *RecipeRepository) getRecipeProduct(recipeId int) []*model.RecipeProduct
 		p.created_at,
 		p.updated_at,
 		p.photo,
-		sum(sp.amount) 
+		sum(sp.amount),
+		p.created_by_id,
+		p.updated_by_id
 	from recipe r 
 	left join recipe_step rs
 		left join step_product sp 
@@ -280,6 +289,8 @@ func (r *RecipeRepository) getRecipeProduct(recipeId int) []*model.RecipeProduct
 			&p.UpdatedAt,
 			&p.Photo,
 			&p.Amount,
+			&p.CreatedById,
+			&p.UpdatedById,
 		); err != nil {
 			continue
 		}

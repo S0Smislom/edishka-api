@@ -12,7 +12,9 @@ CREATE TABLE if not exists "recipe" (
     "preparing_time" INT,
     "kitchen" VARCHAR(100) NOT NULL,
     "difficulty_level" VARCHAR(100) NOT NULL,
-    "published" BOOLEAN NOT NULL DEFAULT TRUE
+    "published" BOOLEAN NOT NULL DEFAULT TRUE,
+    "created_by_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "updated_by_id" INT REFERENCES "user" ("id") ON DELETE CASCADE
 );
 
 CREATE TABLE if not EXISTS "recipe_step" (
@@ -23,7 +25,9 @@ CREATE TABLE if not EXISTS "recipe_step" (
     "description" TEXT,
     "ordering" INT NOT NULL DEFAULT 0,
     "photo" VARCHAR(255),
-    "recipe_id" INT NOT NULL REFERENCES "recipe" ("id") ON DELETE CASCADE
+    "recipe_id" INT NOT NULL REFERENCES "recipe" ("id") ON DELETE CASCADE,
+    "created_by_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "updated_by_id" INT REFERENCES "user" ("id") ON DELETE CASCADE
 );
 
 CREATE TABLE if not EXISTS "step_product" (
@@ -33,6 +37,8 @@ CREATE TABLE if not EXISTS "step_product" (
     "amount" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "created_by_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE,
+    "updated_by_id" INT REFERENCES "user" ("id") ON DELETE CASCADE,
 
     UNIQUE ("recipe_step_id", "product_id")
 );
