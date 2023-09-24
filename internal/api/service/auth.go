@@ -34,13 +34,20 @@ func (s *AuthService) CreateUser(data *model.Login) (*model.LoginResponse, error
 	if err := data.Validate(); err != nil {
 		return nil, err
 	}
-	generatedCode := generateConfirmationCode()
-	data.Code = &generatedCode
-	user_id, err := s.repo.CreateUser(data)
+	data.Code = generateConfirmationCode()
+
+	userId, err := s.userRepo.GetByPhone(data.Phone)
 	if err != nil {
-		return nil, err
+		userId, err = s.repo.CreateUser(data)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		if err := s.userRepo.UpdateCode(userId, data.Code); err != nil {
+			return nil, err
+		}
 	}
-	return user_id, nil
+	return &model.LoginResponse{ID: userId}, nil
 }
 
 func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmResponse, error) {

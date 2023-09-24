@@ -6,10 +6,8 @@ import (
 )
 
 type Login struct {
-	Phone     string  `json:"phone" binding:"required"`
-	FirstName *string `json:"first_name"`
-	LastName  *string `json:"last_name"`
-	Code      *string `json:"-"`
+	Phone string `json:"phone" binding:"required"`
+	Code  string `json:"-"`
 }
 
 func (l Login) Validate() error {
