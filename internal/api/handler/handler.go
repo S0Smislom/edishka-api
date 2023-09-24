@@ -37,5 +37,14 @@ func (h *Handler) InitRoutes() http.Handler {
 	router.HandleFunc("/login/confirm", h.confirmCode()).Methods(http.MethodPost)
 	// router.HandleFunc("/refresh", h.refreshToken()).Methods(http.MethodGet)
 
+	// V1
+	apiRouter := router.PathPrefix("/v1").Subrouter()
+	// Profile
+	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
+	profileRouter.Use(h.authenticateUser)
+	profileRouter.HandleFunc("", h.getCurrentProfileHandler()).Methods(http.MethodGet)
+	profileRouter.HandleFunc("", h.updateProfileHandler()).Methods(http.MethodPatch)
+	profileRouter.HandleFunc("/photo", h.uploadProfilePhotoHandler()).Methods(http.MethodPost)
+	profileRouter.HandleFunc("/photo", h.deleteProfilePhotoHandler()).Methods(http.MethodDelete)
 	return router
 }

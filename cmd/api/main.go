@@ -7,8 +7,10 @@ import (
 	"food/internal/api/repository/postgres"
 	"food/internal/api/server"
 	"food/internal/api/service"
+	"food/internal/file_service/minio"
 	"food/pkg/config"
 	"food/pkg/database"
+	objectstorage "food/pkg/object_storage"
 	"log"
 	"os"
 	"os/signal"
@@ -29,7 +31,7 @@ func init() {
 // @version 1.0
 // @description API Server for FOOD Application
 
-// @host localhost:8080
+// @host localhost:8091
 // @BasePath /
 
 // @securityDefinitions.apikey ApiKeyAuth
@@ -48,8 +50,16 @@ func main() {
 	}
 	defer db.Close()
 
+	minioClient, err := objectstorage.InitMinio(
+		config.MinioEndpoint,
+		config.MinioAccessKey,
+		config.MinioSecretKey,
+		config.MinioUseSSL,
+	)
+	fileService := minio.NewFileServcie(minioClient)
+
 	repo := postgres.NewRepository(db)
-	service := service.NewService(repo, config)
+	service := service.NewService(repo, fileService, config)
 	handler := handler.NewHandler(config, service)
 	srv := new(server.Server)
 	go func() {

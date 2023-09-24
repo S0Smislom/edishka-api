@@ -2,10 +2,6 @@ basePath: /
 definitions:
   model.Login:
     properties:
-      first_name:
-        type: string
-      last_name:
-        type: string
       phone:
         type: string
     required:
@@ -35,6 +31,15 @@ definitions:
       id:
         type: integer
     type: object
+  model.UpdateUser:
+    properties:
+      birthday:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+    type: object
   model.User:
     properties:
       birthday:
@@ -47,13 +52,15 @@ definitions:
         type: string
       phone:
         type: string
+      photo:
+        type: string
     type: object
   response.ErrorResponse:
     properties:
       detail:
         type: string
     type: object
-host: localhost:8080
+host: localhost:8091
 info:
   contact: {}
   description: API Server for FOOD Application
@@ -138,6 +145,101 @@ paths:
       summary: Confirm Code
       tags:
       - Auth
+  /v1/profile:
+    get:
+      description: Get current user
+      operationId: get-current-user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get current user
+      tags:
+      - Profile
+    patch:
+      consumes:
+      - application/json
+      description: Update current user
+      operationId: update-current-user
+      parameters:
+      - description: User udpate data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update current profile
+      tags:
+      - Profile
+  /v1/profile/photo:
+    delete:
+      description: Delete profile photo
+      operationId: delete-profile-photo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete photo
+      tags:
+      - Profile
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload profile photo
+      operationId: upload-profile-photo
+      parameters:
+      - description: this is a test file
+        in: formData
+        name: photo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upload photo
+      tags:
+      - Profile
 securityDefinitions:
   ApiKeyAuth:
     in: header
