@@ -9,6 +9,7 @@ type Repository struct {
 	db *sql.DB
 	*AuthRepository
 	*UserRepository
+	*ProductRepository
 }
 
 func NewRepository(db *sql.DB) *Repository {
@@ -29,4 +30,11 @@ func (r *Repository) User() repository.User {
 		r.UserRepository = NewUserRepository(r.db)
 	}
 	return r.UserRepository
+}
+
+func (r *Repository) Product() repository.Product {
+	if r.ProductRepository == nil {
+		r.ProductRepository = NewProductRepository(r.db)
+	}
+	return r.ProductRepository
 }

@@ -46,5 +46,18 @@ func (h *Handler) InitRoutes() http.Handler {
 	profileRouter.HandleFunc("", h.updateProfileHandler()).Methods(http.MethodPatch)
 	profileRouter.HandleFunc("/photo", h.uploadProfilePhotoHandler()).Methods(http.MethodPost)
 	profileRouter.HandleFunc("/photo", h.deleteProfilePhotoHandler()).Methods(http.MethodDelete)
+
+	// Product
+	productRouter := apiRouter.PathPrefix("/product").Subrouter()
+	productRouter.HandleFunc("", h.getProductListHandler()).Methods(http.MethodGet)
+	productRouter.HandleFunc("/{id:[0-9]+}", h.getProductByIdHandler()).Methods(http.MethodGet)
+	protectedProductRouter := productRouter.PathPrefix("").Subrouter()
+	protectedProductRouter.Use(h.authenticateUser)
+	protectedProductRouter.HandleFunc("", h.createProductHandler()).Methods(http.MethodPost)
+	protectedProductRouter.HandleFunc("/{id:[0-9]+}", h.deleteProductHandler()).Methods(http.MethodDelete)
+	protectedProductRouter.HandleFunc("/{id:[0-9]+}", h.updateProductHandler()).Methods(http.MethodPatch)
+	protectedProductRouter.HandleFunc("/{id:[0-9]+}/photo", h.uploadProductPhotoHandler()).Methods(http.MethodPost)
+	protectedProductRouter.HandleFunc("/{id:[0-9]+}/photo", h.deleteProductPhotoHandler()).Methods(http.MethodDelete)
+
 	return router
 }

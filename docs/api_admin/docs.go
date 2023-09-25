@@ -155,6 +155,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "name": "suggested_by_user",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "title",
                         "in": "query"
@@ -1672,6 +1677,9 @@ const docTemplate = `{
                 "squirrels": {
                     "type": "number"
                 },
+                "suggested_by_user": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -1887,6 +1895,9 @@ const docTemplate = `{
                 "squirrels": {
                     "type": "number"
                 },
+                "suggested_by_user": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -2033,6 +2044,9 @@ const docTemplate = `{
                 },
                 "squirrels": {
                     "type": "number"
+                },
+                "suggested_by_user": {
+                    "type": "boolean"
                 },
                 "title": {
                     "type": "string"
