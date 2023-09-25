@@ -2,8 +2,6 @@ package model
 
 type Product struct {
 	Base
-	Timestamp
-	Creator
 
 	Title       string  `json:"title"`
 	Slug        string  `json:"slug"`
@@ -14,7 +12,8 @@ type Product struct {
 	Squirrels       float64 `json:"squirrels"`
 	Fats            float64 `json:"fats"`
 	Carbohydrates   float64 `json:"carbohydrates"`
-	SuggestedByUser bool    `json:"suggested_by_user"`
+	SuggestedByUser bool    `json:"-"`
+	CreatedById     int     `json:"-"`
 }
 
 type ProductList struct {
@@ -43,10 +42,10 @@ func (m CreateProduct) Validate() error {
 }
 
 type UpdateProduct struct {
-	Title           *string `json:"title"`
-	Slug            *string `json:"slug"`
-	Description     *string `json:"description"`
-	SuggestedByUser *bool   `json:"suggested_by_user"`
+	Title       *string `json:"title"`
+	Slug        *string `json:"slug"`
+	Description *string `json:"description"`
+	// Photo       *string `json:"photo"`
 
 	Calories      *int     `json:"calories"`
 	Squirrels     *float64 `json:"squirrels"`
@@ -61,7 +60,6 @@ func (m UpdateProduct) Validate() error {
 }
 
 type ProductFilter struct {
-	SuggestedByUser  *bool    `json:"suggested_by_user" schema:"suggested_by_user"`
 	Title            *string  `json:"title" schema:"title"`
 	Slug             *string  `json:"slug" schema:"slug"`
 	CaloriesGTE      *int     `json:"calories__gte" schema:"calories__gte"`

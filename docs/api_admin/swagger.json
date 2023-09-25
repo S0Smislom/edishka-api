@@ -148,6 +148,11 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "name": "suggested_by_user",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "title",
                         "in": "query"
@@ -1665,6 +1670,9 @@
                 "squirrels": {
                     "type": "number"
                 },
+                "suggested_by_user": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -1880,6 +1888,9 @@
                 "squirrels": {
                     "type": "number"
                 },
+                "suggested_by_user": {
+                    "type": "boolean"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -2026,6 +2037,9 @@
                 },
                 "squirrels": {
                     "type": "number"
+                },
+                "suggested_by_user": {
+                    "type": "boolean"
                 },
                 "title": {
                     "type": "string"

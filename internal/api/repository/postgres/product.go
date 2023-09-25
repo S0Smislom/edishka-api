@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"food/internal/api_admin/model"
+	"food/internal/api/model"
 	"strconv"
 	"strings"
 	"time"
@@ -21,7 +21,7 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 func (r *ProductRepository) Create(data *model.CreateProduct) (int, error) {
 	var id int
 	row := r.db.QueryRow(
-		"INSERT INTO product (title, slug, description, calories, squirrels, fats, carbohydrates, created_by_id, suggested_by_user) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
+		"INSERT INTO product (title, slug, description, calories, squirrels, fats, carbohydrates, created_by_id) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		data.Title,
 		data.Slug,
 		data.Description,
@@ -30,7 +30,6 @@ func (r *ProductRepository) Create(data *model.CreateProduct) (int, error) {
 		data.Fats,
 		data.Carbohydrates,
 		data.CreatedById,
-		false,
 	)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
@@ -41,7 +40,7 @@ func (r *ProductRepository) Create(data *model.CreateProduct) (int, error) {
 func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 	p := &model.Product{}
 	if err := r.db.QueryRow(
-		"select id, title, slug, description, calories, squirrels, fats, carbohydrates, created_at, updated_at, photo, created_by_id, updated_by_id, suggested_by_user from product where id=$1",
+		"select id, title, slug, description, calories, squirrels, fats, carbohydrates, photo, suggested_by_user, created_by_id from product where id=$1",
 		id,
 	).Scan(
 		&p.Id,
@@ -52,12 +51,9 @@ func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 		&p.Squirrels,
 		&p.Fats,
 		&p.Carbohydrates,
-		&p.CreatedAt,
-		&p.UpdatedAt,
 		&p.Photo,
-		&p.CreatedById,
-		&p.UpdatedById,
 		&p.SuggestedByUser,
+		&p.CreatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("Product not found")
@@ -65,45 +61,6 @@ func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 		return nil, err
 	}
 	return p, nil
-}
-
-func (r *ProductRepository) GetList(limit, offset int, filters *model.ProductFilter) ([]*model.Product, error) {
-	tempQuery := "select id, title, slug, description, calories, squirrels, fats, carbohydrates, created_at, updated_at, photo, created_by_id, updated_by_id, suggested_by_user from product"
-	query, values, err := r.prepareFilters(tempQuery, filters)
-	if err != nil {
-		return nil, err
-	}
-	query += " limit " + strconv.Itoa(limit)
-	query += " offset " + strconv.Itoa(offset)
-	rows, err := r.db.Query(query, values...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	products := []*model.Product{}
-	for rows.Next() {
-		p := &model.Product{}
-		if err := rows.Scan(
-			&p.Id,
-			&p.Title,
-			&p.Slug,
-			&p.Description,
-			&p.Calories,
-			&p.Squirrels,
-			&p.Fats,
-			&p.Carbohydrates,
-			&p.CreatedAt,
-			&p.UpdatedAt,
-			&p.Photo,
-			&p.CreatedById,
-			&p.UpdatedById,
-			&p.SuggestedByUser,
-		); err != nil {
-			return nil, err
-		}
-		products = append(products, p)
-	}
-	return products, nil
 }
 
 func (r *ProductRepository) Count(filters *model.ProductFilter) (int, error) {
@@ -118,6 +75,16 @@ func (r *ProductRepository) Count(filters *model.ProductFilter) (int, error) {
 		return 0, err
 	}
 	return total, nil
+}
+
+func (r *ProductRepository) UpdatePhoto(id int, photo *string) error {
+	_, err := r.db.Exec("update product set photo=$1 where id=$2", photo, id)
+	return err
+}
+
+func (r *ProductRepository) Delete(id int) error {
+	_, err := r.db.Exec("delete from product where id=$1", id)
+	return err
 }
 
 func (r *ProductRepository) Update(id int, data *model.UpdateProduct) error {
@@ -156,10 +123,6 @@ func (r *ProductRepository) Update(id int, data *model.UpdateProduct) error {
 		queryValues = append(queryValues, *data.Carbohydrates)
 		queryParams = append(queryParams, "carbohydrates=$"+strconv.Itoa(len(queryValues)))
 	}
-	if data.SuggestedByUser != nil {
-		queryValues = append(queryValues, *data.SuggestedByUser)
-		queryParams = append(queryParams, "suggested_by_user=$"+strconv.Itoa(len(queryValues)))
-	}
 	if len(queryParams) == 0 || len(queryValues) == 0 {
 		return nil
 	}
@@ -170,14 +133,40 @@ func (r *ProductRepository) Update(id int, data *model.UpdateProduct) error {
 	return err
 }
 
-func (r *ProductRepository) UpdatePhoto(id int, photo *string) error {
-	_, err := r.db.Exec("update product set photo=$1 where id=$2", photo, id)
-	return err
-}
-
-func (r *ProductRepository) Delete(id int) error {
-	_, err := r.db.Exec("delete from product where id=$1", id)
-	return err
+func (r *ProductRepository) GetList(limit, offset int, filters *model.ProductFilter) ([]*model.Product, error) {
+	tempQuery := "select id, title, slug, description, calories, squirrels, fats, carbohydrates, photo, suggested_by_user, created_by_id from product"
+	query, values, err := r.prepareFilters(tempQuery, filters)
+	if err != nil {
+		return nil, err
+	}
+	query += " limit " + strconv.Itoa(limit)
+	query += " offset " + strconv.Itoa(offset)
+	rows, err := r.db.Query(query, values...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	products := []*model.Product{}
+	for rows.Next() {
+		p := &model.Product{}
+		if err := rows.Scan(
+			&p.Id,
+			&p.Title,
+			&p.Slug,
+			&p.Description,
+			&p.Calories,
+			&p.Squirrels,
+			&p.Fats,
+			&p.Carbohydrates,
+			&p.Photo,
+			&p.SuggestedByUser,
+			&p.CreatedById,
+		); err != nil {
+			return nil, err
+		}
+		products = append(products, p)
+	}
+	return products, nil
 }
 
 func (r *ProductRepository) prepareFilters(query string, filters *model.ProductFilter) (string, []interface{}, error) {
@@ -228,11 +217,6 @@ func (r *ProductRepository) prepareFilters(query string, filters *model.ProductF
 	if filters.CarbohydratesLTE != nil {
 		filterValues = append(filterValues, *filters.CarbohydratesLTE)
 		filterQuery = append(filterQuery, "carbohydrates <= $"+strconv.Itoa(len(filterValues)))
-	}
-	// SuggesterByUser
-	if filters.SuggestedByUser != nil {
-		filterValues = append(filterValues, *filters.SuggestedByUser)
-		filterQuery = append(filterQuery, "suggested_by_user = $"+strconv.Itoa(len(filterValues)))
 	}
 	if len(filterValues) == 0 {
 		return query, filterValues, nil
