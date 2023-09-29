@@ -11,7 +11,8 @@ import (
 type Auth interface {
 	CreateUser(data *model.Login) (*model.LoginResponse, error)
 	Login(data *model.LoginConfirm) (*model.LoginConfirmResponse, error)
-	ParseToken(accessToken string) (int, error)
+	Refresh(userId int) (*model.LoginConfirmResponse, error)
+	ParseToken(accessToken string) (*model.TokenClaims, error)
 }
 
 type User interface {
@@ -39,7 +40,7 @@ type Service struct {
 
 func NewService(repos repository.Repository, fileService fileservice.FileService, config *config.Config) *Service {
 	return &Service{
-		Auth:    NewAuthService(config.AccessTokenTTL, config.TokenSecret, repos.Auth(), repos.User()),
+		Auth:    NewAuthService(config.AccessTokenTTL, config.RefreshTokenTTL, config.TokenSecret, repos.Auth(), repos.User()),
 		User:    NewUserService(repos.User(), fileService),
 		Product: NewProductService(repos.Product(), fileService),
 	}

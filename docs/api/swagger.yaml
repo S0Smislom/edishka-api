@@ -220,6 +220,26 @@ paths:
       summary: Confirm Code
       tags:
       - Auth
+  /login/refresh:
+    post:
+      description: Generate new access/refresh tokens
+      operationId: refresh-tokens
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LoginConfirmResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh token
+      tags:
+      - Auth
   /v1/product:
     get:
       consumes:

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"food/internal/api/model"
 	"food/pkg/response"
 	"net/http"
@@ -60,5 +61,36 @@ func (h *Handler) confirmCode() http.HandlerFunc {
 			return
 		}
 		response.Respond(w, r, http.StatusOK, response_data)
+	}
+}
+
+// @Summary Refresh token
+// @Tags Auth
+// @Security ApiKeyAuth
+// @Description Generate new access/refresh tokens
+// @ID refresh-tokens
+// @Produce json
+// @Success 200 {object} model.LoginConfirmResponse
+// @Failure default {object} response.ErrorResponse
+// @Router /login/refresh [post]
+func (h *Handler) refreshTokenHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		header := r.Header.Get(authorizationHeader)
+		claims, err := h.parseAuthHeader(header)
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusInternalServerError, errors.New("invalid auth header"))
+			return
+		}
+		if claims.TokenType != model.RefreshTokenType {
+			response.ErrorRespond(w, r, http.StatusInternalServerError, errors.New("Wrong token type"))
+			return
+		}
+		response_data, err := h.services.Auth.Refresh(claims.UserId)
+		if err != nil {
+			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			return
+		}
+		response.Respond(w, r, http.StatusOK, response_data)
+
 	}
 }
