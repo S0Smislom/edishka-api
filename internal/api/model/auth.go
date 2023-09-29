@@ -5,6 +5,13 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
+type TokenType string
+
+const (
+	RefreshTokenType TokenType = "refresh"
+	AccessTokenType  TokenType = "access"
+)
+
 type Login struct {
 	Phone string `json:"phone" binding:"required"`
 	Code  string `json:"-"`
@@ -40,5 +47,6 @@ type LoginConfirmResponse struct {
 
 type TokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
+	UserId    int       `json:"user_id"`
+	TokenType TokenType `json:"type"`
 }

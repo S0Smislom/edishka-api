@@ -15,18 +15,20 @@ const (
 )
 
 type AuthService struct {
-	accessTokenTTL int
-	tokenSecret    string
-	repo           repository.Auth
-	userRepo       repository.User
+	accessTokenTTL  int
+	refreshTokenTTL int
+	tokenSecret     string
+	repo            repository.Auth
+	userRepo        repository.User
 }
 
-func NewAuthService(accessTokenTTL int, tokenSecret string, repo repository.Auth, userRepo repository.User) *AuthService {
+func NewAuthService(accessTokenTTL, refreshTokenTTL int, tokenSecret string, repo repository.Auth, userRepo repository.User) *AuthService {
 	return &AuthService{
-		repo:           repo,
-		userRepo:       userRepo,
-		accessTokenTTL: accessTokenTTL,
-		tokenSecret:    tokenSecret,
+		repo:            repo,
+		userRepo:        userRepo,
+		accessTokenTTL:  accessTokenTTL,
+		refreshTokenTTL: refreshTokenTTL,
+		tokenSecret:     tokenSecret,
 	}
 }
 
@@ -61,33 +63,26 @@ func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmRespon
 	if dbUser.Code == nil || hash.GenerateHash(data.Code, salt) != *dbUser.Code {
 		return nil, errors.New("Invalid code")
 	}
-
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &model.TokenClaims{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(s.accessTokenTTL) * time.Hour).Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
-		UserId: dbUser.ID,
-	})
-	access_token, err := accessToken.SignedString([]byte(s.tokenSecret))
+	// Generate access token
+	accessTokenSigned, err := generateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
+	if err != nil {
+		return nil, err
+	}
+	// Generate refresh token
+	refreshTokenSigned, err := generateToken(model.RefreshTokenType, dbUser, s.refreshTokenTTL, s.tokenSecret)
 	if err != nil {
 		return nil, err
 	}
 
-	// refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &model.TokenClaims{
-	// 	StandardClaims: jwt.StandardClaims{
-	// 		ExpiresAt: time.Now().Add(s.re),
-	// 	},
-	// })
-
 	response := &model.LoginConfirmResponse{
-		AccessToken: access_token,
-		User:        dbUser,
+		AccessToken:  accessTokenSigned,
+		RefreshToken: refreshTokenSigned,
+		User:         dbUser,
 	}
 	return response, nil
 }
 
-func (s *AuthService) ParseToken(accessToken string) (int, error) {
+func (s *AuthService) ParseToken(accessToken string) (*model.TokenClaims, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &model.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -96,15 +91,37 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		return []byte(s.tokenSecret), nil
 	})
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	claims, ok := token.Claims.(*model.TokenClaims)
 	if !ok {
-		return 0, errors.New("token claims are not of type *TokenClaims")
+		return nil, errors.New("token claims are not of type *TokenClaims")
 	}
 
-	return claims.UserId, nil
+	return claims, nil
+}
+func (s *AuthService) Refresh(userId int) (*model.LoginConfirmResponse, error) {
+	dbUser, err := s.userRepo.GetById(userId)
+	if err != nil {
+		return nil, err
+	}
+	// Generate access token
+	accessTokenSigned, err := generateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
+	if err != nil {
+		return nil, err
+	}
+	// Generate refresh token
+	refreshTokenSigned, err := generateToken(model.RefreshTokenType, dbUser, s.refreshTokenTTL, s.tokenSecret)
+	if err != nil {
+		return nil, err
+	}
+	response := &model.LoginConfirmResponse{
+		AccessToken:  accessTokenSigned,
+		RefreshToken: refreshTokenSigned,
+		User:         dbUser,
+	}
+	return response, nil
 }
 
 func generateConfirmationCode() string {
@@ -120,3 +137,23 @@ func generateConfirmationCode() string {
 
 // 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 // }
+
+func generateToken(tokenType model.TokenType, dbUser *model.User, ttl int, secret string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &model.TokenClaims{
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: getTokenExpiresAt(ttl).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+		UserId:    dbUser.ID,
+		TokenType: tokenType,
+	})
+	tokenSigned, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
+	return tokenSigned, nil
+}
+
+func getTokenExpiresAt(ttl int) time.Time {
+	return time.Now().Add(time.Duration(ttl) * time.Hour)
+}

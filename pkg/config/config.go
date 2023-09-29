@@ -17,8 +17,9 @@ type Config struct {
 	DatabaseURL string `toml:"database_url"`
 	SessionKey  string `toml:"session_key"`
 
-	AccessTokenTTL int    `toml:"access_token_ttl"`
-	TokenSecret    string `toml:"token_secret"`
+	AccessTokenTTL  int    `toml:"access_token_ttl"`
+	RefreshTokenTTL int    `toml:"refresh_token_ttl"`
+	TokenSecret     string `toml:"token_secret"`
 
 	AdminAccessTokenTTL int    `toml:"admin_access_token_ttl"`
 	AdminTokenSecret    string `toml:"admin_token_secret"`

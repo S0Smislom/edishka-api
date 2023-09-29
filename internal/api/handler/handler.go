@@ -35,7 +35,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	// Auth
 	router.HandleFunc("/login", h.logIn()).Methods(http.MethodPost)
 	router.HandleFunc("/login/confirm", h.confirmCode()).Methods(http.MethodPost)
-	// router.HandleFunc("/refresh", h.refreshToken()).Methods(http.MethodGet)
+	router.HandleFunc("/login/refresh", h.refreshTokenHandler()).Methods(http.MethodPost)
 
 	// V1
 	apiRouter := router.PathPrefix("/v1").Subrouter()
