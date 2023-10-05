@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"food/internal/api_admin/model"
+	"food/pkg/exceptions"
 	"strconv"
 	"strings"
 	"time"
@@ -43,7 +43,7 @@ func (r *RecipeRepository) GetById(id int) (*model.Recipe, error) {
 	p, err := r.scan(queryRow)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("Recipe not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "Recipe not found"}
 		}
 		return nil, err
 	}

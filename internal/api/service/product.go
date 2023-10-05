@@ -1,11 +1,11 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"food/internal/api/model"
 	"food/internal/api/repository"
 	fileservice "food/internal/file_service"
+	"food/pkg/exceptions"
 	"mime/multipart"
 )
 
@@ -104,7 +104,7 @@ func (s *ProductService) DeletePhoto(id int, currentUserId int) (*model.Product,
 
 func (s *ProductService) checkPermissions(dbModel *model.Product, currentUserId int) error {
 	if dbModel.CreatedById != currentUserId {
-		return errors.New("Forbidden")
+		return &exceptions.UserPermissionError{Msg: "Forbidden"}
 	}
 	return nil
 }

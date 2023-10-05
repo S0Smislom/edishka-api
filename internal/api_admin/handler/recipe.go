@@ -26,13 +26,13 @@ func (h *Handler) handlerCreateRecipe() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &model.CreateRecipe{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		req.CreatedById = r.Context().Value(userCtx).(int)
 		recipe, err := h.service.RecipeService.Create(req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipe)
@@ -55,12 +55,12 @@ func (h *Handler) handlerGetRecipeById() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		recipe, err := h.service.RecipeService.GetById(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusNotFound, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipe)
@@ -96,7 +96,7 @@ func (h *Handler) handlerGetRecipeList() http.HandlerFunc {
 		}
 		recipeList, err := h.service.RecipeService.GetList(limit, offset, req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipeList)
@@ -120,19 +120,19 @@ func (h *Handler) handlerUpdateRecipe() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		data := &model.UpdateRecipe{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		userId := r.Context().Value(userCtx).(int)
 		data.UpdatedById = &userId
 		recipe, err := h.service.RecipeService.Update(id, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipe)
@@ -155,12 +155,12 @@ func (h *Handler) handlerDeleteRecipe() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		recipe, err := h.service.RecipeService.Delete(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipe)

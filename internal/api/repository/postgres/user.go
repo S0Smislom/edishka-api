@@ -2,8 +2,8 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"food/internal/api/model"
+	"food/pkg/exceptions"
 	"strconv"
 	"strings"
 )
@@ -31,7 +31,7 @@ func (r *UserRepository) GetById(item_id int) (*model.User, error) {
 		&u.Photo,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("User not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "User not found"}
 		}
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (r *UserRepository) GetByPhone(phone string) (int, error) {
 		phone,
 	).Scan(&id); err != nil {
 		if err == sql.ErrNoRows {
-			return id, errors.New("User not found")
+			return id, &exceptions.ObjectNotFoundError{Msg: "User not found"}
 		}
 		return id, err
 	}

@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"food/internal/api_admin/model"
+	"food/pkg/exceptions"
 	"strconv"
 	"strings"
 	"time"
@@ -60,7 +60,7 @@ func (r *ProductRepository) GetById(id int) (*model.Product, error) {
 		&p.SuggestedByUser,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("Product not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "Product not found"}
 		}
 		return nil, err
 	}

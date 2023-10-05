@@ -25,6 +25,7 @@ func NewHandler(config *config.Config, services *service.Service) *Handler {
 func (h *Handler) InitRoutes() http.Handler {
 	router := mux.NewRouter()
 	router.Use(middleware.LogRequest)
+	router.Use(middleware.EnableCors)
 	router.PathPrefix("/docs/").Handler(httpSwagger.Handler(
 		httpSwagger.URL(fmt.Sprintf("%s/docs/api/doc.json", h.config.BaseAPIURL)), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),

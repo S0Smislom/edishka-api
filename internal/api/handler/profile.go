@@ -21,7 +21,7 @@ func (h *Handler) getCurrentProfileHandler() http.HandlerFunc {
 		currentUserId := r.Context().Value(userCtx).(int)
 		dbUser, err := h.services.User.GetById(currentUserId)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusNotFound, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, dbUser)
@@ -44,12 +44,12 @@ func (h *Handler) updateProfileHandler() http.HandlerFunc {
 		currentUserId := r.Context().Value(userCtx).(int)
 		data := &model.UpdateUser{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		dbUser, err := h.services.User.Update(currentUserId, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, dbUser)
@@ -77,7 +77,7 @@ func (h *Handler) uploadProfilePhotoHandler() http.HandlerFunc {
 		defer file.Close()
 		dbUser, err := h.services.User.UploadPhoto(currentUserId, file, fileHeader)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, dbUser)
@@ -98,7 +98,7 @@ func (h *Handler) deleteProfilePhotoHandler() http.HandlerFunc {
 		currentUserId := r.Context().Value(userCtx).(int)
 		dbUser, err := h.services.User.DeletePhoto(currentUserId)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, dbUser)

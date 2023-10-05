@@ -1,9 +1,9 @@
 package service
 
 import (
-	"errors"
 	"food/internal/api/model"
 	"food/internal/api/repository"
+	"food/pkg/exceptions"
 	"food/pkg/hash"
 	"time"
 
@@ -61,7 +61,7 @@ func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmRespon
 		return nil, err
 	}
 	if dbUser.Code == nil || hash.GenerateHash(data.Code, salt) != *dbUser.Code {
-		return nil, errors.New("Invalid code")
+		return nil, &exceptions.UnauthorizedError{Msg: "Invalid code"}
 	}
 	// Generate access token
 	accessTokenSigned, err := generateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
@@ -85,7 +85,7 @@ func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmRespon
 func (s *AuthService) ParseToken(accessToken string) (*model.TokenClaims, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &model.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid signing method")
+			return nil, &exceptions.UnauthorizedError{Msg: "invalid signing method"}
 		}
 
 		return []byte(s.tokenSecret), nil
@@ -96,7 +96,7 @@ func (s *AuthService) ParseToken(accessToken string) (*model.TokenClaims, error)
 
 	claims, ok := token.Claims.(*model.TokenClaims)
 	if !ok {
-		return nil, errors.New("token claims are not of type *TokenClaims")
+		return nil, &exceptions.UnauthorizedError{Msg: "token claims are not of type *TokenClaims"}
 	}
 
 	return claims, nil

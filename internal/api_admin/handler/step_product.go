@@ -26,13 +26,13 @@ func (h *Handler) handlerCreateStepProduct() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &model.CreateStepProduct{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		req.CreatedById = r.Context().Value(userCtx).(int)
 		StepProduct, err := h.service.StepProductService.Create(req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, StepProduct)
@@ -55,12 +55,12 @@ func (h *Handler) handlerGetStepProductById() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		StepProduct, err := h.service.StepProductService.GetById(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusNotFound, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, StepProduct)
@@ -96,7 +96,7 @@ func (h *Handler) handlerGetStepProductList() http.HandlerFunc {
 		}
 		StepProductList, err := h.service.StepProductService.GetList(limit, offset, req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, StepProductList)
@@ -120,19 +120,19 @@ func (h *Handler) handlerUpdateStepProduct() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		data := &model.UpdateStepProduct{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		userId := r.Context().Value(userCtx).(int)
 		data.UpdatedById = &userId
 		StepProduct, err := h.service.StepProductService.Update(id, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, StepProduct)
@@ -155,12 +155,12 @@ func (h *Handler) handlerDeleteStepProduct() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		StepProduct, err := h.service.StepProductService.Delete(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, StepProduct)

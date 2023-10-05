@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"food/internal/api_admin/model"
+	"food/pkg/exceptions"
 	"strconv"
 	"strings"
 	"time"
@@ -51,7 +51,7 @@ func (r *RecipeGalleryRepository) GetById(id int) (*model.RecipeGallery, error) 
 		&p.UpdatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("RecipeGallery not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "RecipeGallery not found"}
 		}
 		return nil, err
 	}

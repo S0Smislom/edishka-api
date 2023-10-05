@@ -2,6 +2,8 @@ package response
 
 import (
 	"encoding/json"
+	"errors"
+	"food/pkg/exceptions"
 	"net/http"
 )
 
@@ -11,6 +13,8 @@ type ResponseWriter struct {
 }
 
 type ErrorResponse struct {
+	Type   string `json:"type"`
+	Title  string `json:"title"`
 	Detail string `json:"detail"`
 }
 
@@ -27,6 +31,33 @@ func Respond(w http.ResponseWriter, r *http.Request, code int, data interface{})
 	}
 }
 
-func ErrorRespond(w http.ResponseWriter, r *http.Request, code int, err error) {
-	Respond(w, r, code, ErrorResponse{Detail: err.Error()})
+func ErrorRespond(w http.ResponseWriter, r *http.Request, err error) {
+	code, response := handleError(err)
+	Respond(w, r, code, response)
+}
+
+func handleError(err error) (int, ErrorResponse) {
+	var objectNotFoundError *exceptions.ObjectNotFoundError
+	var userPermissionError *exceptions.UserPermissionError
+	var duplicateError *exceptions.DuplicateError
+	var logicError *exceptions.LogicError
+	var unauthorizedError *exceptions.UnauthorizedError
+	var wrongPasswordError *exceptions.WrongPasswordError
+
+	switch {
+	case errors.As(err, &objectNotFoundError):
+		return http.StatusNotFound, ErrorResponse{"Value Error", "Not Found", err.Error()}
+	case errors.As(err, &userPermissionError):
+		return http.StatusForbidden, ErrorResponse{"Permission Error", "Forbidden", err.Error()}
+	case errors.As(err, &duplicateError):
+		return http.StatusBadRequest, ErrorResponse{"Value Error", "Duplicate", err.Error()}
+	case errors.As(err, &logicError):
+		return http.StatusForbidden, ErrorResponse{"Logic Error", "Logic Error", err.Error()}
+	case errors.As(err, &unauthorizedError):
+		return http.StatusUnauthorized, ErrorResponse{"Permission Error", "Unauthorized", err.Error()}
+	case errors.As(err, &wrongPasswordError):
+		return http.StatusUnauthorized, ErrorResponse{"Permission Error", "Wrong Password", err.Error()}
+	default:
+		return http.StatusInternalServerError, ErrorResponse{"Server Error", "Internal Server Error", err.Error()}
+	}
 }

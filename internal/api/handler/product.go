@@ -26,13 +26,13 @@ func (h *Handler) createProductHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &model.CreateProduct{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		req.CreatedById = r.Context().Value(userCtx).(int)
 		product, err := h.services.Product.Create(req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -54,12 +54,12 @@ func (h *Handler) getProductByIdHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		product, err := h.services.Product.GetById(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusNotFound, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -94,7 +94,7 @@ func (h *Handler) getProductListHandler() http.HandlerFunc {
 		}
 		productList, err := h.services.Product.GetList(limit, offset, req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, productList)
@@ -118,19 +118,19 @@ func (h *Handler) updateProductHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		data := &model.UpdateProduct{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		userId := r.Context().Value(userCtx).(int)
 		data.UpdatedById = &userId
 		product, err := h.services.Product.Update(id, userId, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -153,13 +153,13 @@ func (h *Handler) deleteProductHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		currentUserId := r.Context().Value(userCtx).(int)
 		product, err := h.services.Product.Delete(id, currentUserId)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -183,7 +183,7 @@ func (h *Handler) uploadProductPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		file, fileHeader, err := r.FormFile("photo")
@@ -194,7 +194,7 @@ func (h *Handler) uploadProductPhotoHandler() http.HandlerFunc {
 		currentUserId := r.Context().Value(userCtx).(int)
 		product, err := h.services.Product.UploadPhoto(id, currentUserId, file, fileHeader)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -215,13 +215,13 @@ func (h *Handler) deleteProductPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		currentUserId := r.Context().Value(userCtx).(int)
 		product, err := h.services.Product.DeletePhoto(id, currentUserId)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
