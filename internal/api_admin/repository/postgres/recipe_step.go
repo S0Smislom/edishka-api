@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"food/internal/api_admin/model"
+	"food/pkg/exceptions"
 	"strconv"
 	"strings"
 	"time"
@@ -52,7 +52,7 @@ func (r *RecipeStepRepository) GetById(id int) (*model.RecipeStep, error) {
 		&p.UpdatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("RecipeStep not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "RecipeStep not found"}
 		}
 		return nil, err
 	}

@@ -134,6 +134,10 @@ definitions:
     properties:
       detail:
         type: string
+      title:
+        type: string
+      type:
+        type: string
     type: object
 host: localhost:8091
 info:

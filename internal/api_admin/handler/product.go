@@ -26,13 +26,13 @@ func (h *Handler) handlerCreateProduct() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &model.CreateProduct{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		req.CreatedById = r.Context().Value(userCtx).(int)
 		product, err := h.service.ProductService.Create(req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -55,12 +55,12 @@ func (h *Handler) handlerGetProductById() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		product, err := h.service.ProductService.GetById(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusNotFound, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -96,7 +96,7 @@ func (h *Handler) handlerGetProductList() http.HandlerFunc {
 		}
 		productList, err := h.service.ProductService.GetList(limit, offset, req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, productList)
@@ -120,19 +120,19 @@ func (h *Handler) handlerUpdateProduct() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		data := &model.UpdateProduct{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		userId := r.Context().Value(userCtx).(int)
 		data.UpdatedById = &userId
 		product, err := h.service.ProductService.Update(id, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -155,12 +155,12 @@ func (h *Handler) handlerDeleteProduct() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		product, err := h.service.ProductService.Delete(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -184,7 +184,7 @@ func (h *Handler) uploadProductPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		file, fileHeader, err := r.FormFile("photo")
@@ -194,7 +194,7 @@ func (h *Handler) uploadProductPhotoHandler() http.HandlerFunc {
 		defer file.Close()
 		product, err := h.service.ProductService.UploadPhoto(id, file, fileHeader)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -215,12 +215,12 @@ func (h *Handler) deleteProductPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		product, err := h.service.ProductService.DeletePhoto(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)

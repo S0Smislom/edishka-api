@@ -68,19 +68,19 @@ func (h *Handler) updateRecipeGalleryPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		data := &model.UpdateRecipeGallery{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		userId := r.Context().Value(userCtx).(int)
 		data.UpdatedById = &userId
 		recipeGalleryPhoto, err := h.service.RecipeGalleryService.Update(id, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipeGalleryPhoto)
@@ -103,12 +103,12 @@ func (h *Handler) deleteRecipeGalleryPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		recipeGalleryPhoto, err := h.service.RecipeGalleryService.Delete(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipeGalleryPhoto)

@@ -876,6 +876,12 @@ const docTemplate = `{
             "properties": {
                 "detail": {
                     "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         }

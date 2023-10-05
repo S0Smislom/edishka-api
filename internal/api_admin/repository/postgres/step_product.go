@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"food/internal/api_admin/model"
+	"food/pkg/exceptions"
 	"strconv"
 	"strings"
 	"time"
@@ -49,7 +49,7 @@ func (r *StepProductRepository) GetById(id int) (*model.StepProduct, error) {
 		&p.UpdatedById,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("StepProduct not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "StepProduct not found"}
 		}
 		return nil, err
 	}

@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
-	"errors"
 	"food/internal/api/model"
+	"food/pkg/exceptions"
 	"food/pkg/response"
 	"net/http"
 	"strings"
@@ -19,11 +19,11 @@ func (h *Handler) authenticateUser(next http.Handler) http.Handler {
 		header := r.Header.Get(authorizationHeader)
 		claims, err := h.parseAuthHeader(header)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusInternalServerError, errors.New("invalid auth header"))
+			response.ErrorRespond(w, r, &exceptions.UnauthorizedError{Msg: "invalid auth header"})
 			return
 		}
 		if claims.TokenType != model.AccessTokenType {
-			response.ErrorRespond(w, r, http.StatusUnauthorized, errors.New("Wrong token type"))
+			response.ErrorRespond(w, r, &exceptions.UnauthorizedError{Msg: "Wrong token type"})
 			return
 		}
 		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), userCtx, claims.UserId)))
@@ -49,14 +49,14 @@ func (h *Handler) optionalAuthenticateUser(next http.Handler) http.Handler {
 
 func (h *Handler) parseAuthHeader(header string) (*model.TokenClaims, error) {
 	if header == "" {
-		return nil, errors.New("Empty auth header")
+		return nil, &exceptions.UnauthorizedError{Msg: "Empty auth header"}
 	}
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		return nil, errors.New("Invalide auth header")
+		return nil, &exceptions.UnauthorizedError{Msg: "Invalide auth header"}
 	}
 	if len(headerParts[1]) == 0 {
-		return nil, errors.New("Token in empty")
+		return nil, &exceptions.UnauthorizedError{Msg: "Token in empty"}
 	}
 	claims, err := h.services.Auth.ParseToken(headerParts[1])
 	if err != nil {

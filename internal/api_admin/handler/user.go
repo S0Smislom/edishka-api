@@ -21,7 +21,7 @@ func (h *Handler) me() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, err := h.service.UserService.GetById(r.Context().Value(userCtx).(int))
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 		}
 		response.Respond(w, r, http.StatusOK, user)
 	}

@@ -23,12 +23,12 @@ func (h *Handler) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &model.Login{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		responseData, err := h.service.AuthService.Login(data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, responseData)

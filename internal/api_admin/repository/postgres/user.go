@@ -2,8 +2,8 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
 	"food/internal/api_admin/model"
+	"food/pkg/exceptions"
 )
 
 type UserRepository struct {
@@ -32,7 +32,7 @@ func (r *UserRepository) GetByPhone(phone string) (*model.User, error) {
 		&u.Password,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("User not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "User not found"}
 		}
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (r *UserRepository) GetById(id int) (*model.User, error) {
 		&u.Password,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("User not found")
+			return nil, &exceptions.ObjectNotFoundError{Msg: "User not found"}
 		}
 		return nil, err
 	}

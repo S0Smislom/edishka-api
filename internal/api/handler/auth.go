@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"errors"
 	"food/internal/api/model"
+	"food/pkg/exceptions"
 	"food/pkg/response"
 	"net/http"
 )
@@ -24,12 +24,12 @@ func (h *Handler) logIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &model.Login{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		user, err := h.services.Auth.CreateUser(data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, user)
@@ -52,12 +52,12 @@ func (h *Handler) confirmCode() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &model.LoginConfirm{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response_data, err := h.services.Auth.Login(data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, response_data)
@@ -78,16 +78,16 @@ func (h *Handler) refreshTokenHandler() http.HandlerFunc {
 		header := r.Header.Get(authorizationHeader)
 		claims, err := h.parseAuthHeader(header)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusInternalServerError, errors.New("invalid auth header"))
+			response.ErrorRespond(w, r, &exceptions.UserPermissionError{Msg: "invalid auth header"})
 			return
 		}
 		if claims.TokenType != model.RefreshTokenType {
-			response.ErrorRespond(w, r, http.StatusInternalServerError, errors.New("Wrong token type"))
+			response.ErrorRespond(w, r, &exceptions.UserPermissionError{Msg: "Wrong token type"})
 			return
 		}
 		response_data, err := h.services.Auth.Refresh(claims.UserId)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, response_data)

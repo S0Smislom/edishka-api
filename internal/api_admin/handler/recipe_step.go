@@ -26,13 +26,13 @@ func (h *Handler) handlerCreateRecipeStep() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &model.CreateRecipeStep{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		req.CreatedById = r.Context().Value(userCtx).(int)
 		recipeStep, err := h.service.RecipeStepService.Create(req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, recipeStep)
@@ -55,12 +55,12 @@ func (h *Handler) handlerGetRecipeStepById() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		RecipeStep, err := h.service.RecipeStepService.GetById(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusNotFound, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, RecipeStep)
@@ -96,7 +96,7 @@ func (h *Handler) handlerGetRecipeStepList() http.HandlerFunc {
 		}
 		RecipeStepList, err := h.service.RecipeStepService.GetList(limit, offset, req)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, RecipeStepList)
@@ -120,19 +120,19 @@ func (h *Handler) handlerUpdateRecipeStep() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		data := &model.UpdateRecipeStep{}
 		if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-			response.ErrorRespond(w, r, http.StatusUnprocessableEntity, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		userId := r.Context().Value(userCtx).(int)
 		data.UpdatedById = &userId
 		RecipeStep, err := h.service.RecipeStepService.Update(id, data)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, RecipeStep)
@@ -155,12 +155,12 @@ func (h *Handler) handlerDeleteRecipeStep() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		RecipeStep, err := h.service.RecipeStepService.Delete(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, RecipeStep)
@@ -184,7 +184,7 @@ func (h *Handler) uploadRecipeStepPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		file, fileHeader, err := r.FormFile("photo")
@@ -194,7 +194,7 @@ func (h *Handler) uploadRecipeStepPhotoHandler() http.HandlerFunc {
 		defer file.Close()
 		product, err := h.service.RecipeStepService.UploadPhoto(id, file, fileHeader)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
@@ -215,12 +215,12 @@ func (h *Handler) deleteRecipeStepPhotoHandler() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusOK, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		product, err := h.service.RecipeStepService.DeletePhoto(id)
 		if err != nil {
-			response.ErrorRespond(w, r, http.StatusBadRequest, err)
+			response.ErrorRespond(w, r, err)
 			return
 		}
 		response.Respond(w, r, http.StatusOK, product)
