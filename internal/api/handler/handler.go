@@ -13,6 +13,10 @@ import (
 	_ "food/docs/api"
 )
 
+const (
+	defaultMaxMemory = 32 << 20 // 32 MB
+)
+
 type Handler struct {
 	services *service.Service
 	config   *config.Config
@@ -59,6 +63,48 @@ func (h *Handler) InitRoutes() http.Handler {
 	protectedProductRouter.HandleFunc("/{id:[0-9]+}", h.updateProductHandler()).Methods(http.MethodPatch)
 	protectedProductRouter.HandleFunc("/{id:[0-9]+}/photo", h.uploadProductPhotoHandler()).Methods(http.MethodPost)
 	protectedProductRouter.HandleFunc("/{id:[0-9]+}/photo", h.deleteProductPhotoHandler()).Methods(http.MethodDelete)
+
+	// Recipe
+	recipeRouter := apiRouter.PathPrefix("/recipe").Subrouter()
+	protectedRecipeRouter := recipeRouter.PathPrefix("").Subrouter()
+	protectedRecipeRouter.Use(h.authenticateUser)
+	protectedRecipeRouter.HandleFunc("", h.createRecipeHandler()).Methods(http.MethodPost)
+	protectedRecipeRouter.HandleFunc("/private", h.getRecipeListPrivateHandler()).Methods(http.MethodGet)
+	protectedRecipeRouter.HandleFunc("/{id:[0-9]+}/private", h.getRecipeByIdPrivateHandler()).Methods(http.MethodGet)
+	protectedRecipeRouter.HandleFunc("/{id:[0-9]+}", h.deleteRecipeHandler()).Methods(http.MethodDelete)
+	protectedRecipeRouter.HandleFunc("/{id:[0-9]+}", h.updateRecipeHandler()).Methods(http.MethodPatch)
+	recipeRouter.HandleFunc("", h.getRecipeListHandler()).Methods(http.MethodGet)
+	recipeRouter.HandleFunc("/{id:[0-9]+}", h.getRecipeByIdHandler()).Methods(http.MethodGet)
+
+	// RecipeStep
+	recipeStepRouter := apiRouter.PathPrefix("/recipe-step").Subrouter()
+	protectedRecipeStepRouter := recipeStepRouter.PathPrefix("").Subrouter()
+	protectedRecipeStepRouter.Use(h.authenticateUser)
+	protectedRecipeStepRouter.HandleFunc("", h.createRecipeStepHandler()).Methods(http.MethodPost)
+	protectedRecipeStepRouter.HandleFunc("/{id:[0-9]+}", h.deleteRecipeStepHandler()).Methods(http.MethodDelete)
+	protectedRecipeStepRouter.HandleFunc("/{id:[0-9]+}", h.updateRecipeStepHandler()).Methods(http.MethodPatch)
+	protectedRecipeStepRouter.HandleFunc("/{id:[0-9]+}/photo", h.uploadRecipeStepPhotoHandler()).Methods(http.MethodPost)
+	protectedRecipeStepRouter.HandleFunc("/{id:[0-9]+}/photo", h.deleteRecipeStepPhotoHandler()).Methods(http.MethodDelete)
+	recipeStepRouter.HandleFunc("", h.getRecipeStepListHandler()).Methods(http.MethodGet)
+	recipeStepRouter.HandleFunc("/{id:[0-9]+}", h.getRecipeStepByIdHandler()).Methods(http.MethodGet)
+
+	// StepProduct
+	stepProductRouter := apiRouter.PathPrefix("/step-product").Subrouter()
+	protectedStepProductRouter := stepProductRouter.PathPrefix("").Subrouter()
+	protectedStepProductRouter.Use(h.authenticateUser)
+	protectedStepProductRouter.HandleFunc("", h.createStepProductHandler()).Methods(http.MethodPost)
+	protectedStepProductRouter.HandleFunc("/{id:[0-9]+}", h.deleteStepProductHandler()).Methods(http.MethodDelete)
+	protectedStepProductRouter.HandleFunc("/{id:[0-9]+}", h.updateStepProductHandler()).Methods(http.MethodPatch)
+	stepProductRouter.HandleFunc("", h.getStepProductListHandler()).Methods(http.MethodGet)
+	stepProductRouter.HandleFunc("/{id:[0-9]+}", h.getStepProductByIdHandler()).Methods(http.MethodGet)
+
+	// RecipeGallery
+	recipeGalleryRouter := apiRouter.PathPrefix("/recipe-gallery").Subrouter()
+	protectedRecipeGalleryRouter := recipeGalleryRouter.PathPrefix("").Subrouter()
+	protectedRecipeGalleryRouter.Use(h.authenticateUser)
+	protectedRecipeGalleryRouter.HandleFunc("", h.createRecipeGalleryPhotoHandler()).Methods(http.MethodPost)
+	protectedRecipeGalleryRouter.HandleFunc("/{id:[0-9]+}", h.deleteRecipeGalleryPhotoHandler()).Methods(http.MethodDelete)
+	protectedRecipeGalleryRouter.HandleFunc("/{id:[0-9]+}", h.updateRecipeGalleryPhotoHandler()).Methods(http.MethodPatch)
 
 	return router
 }
