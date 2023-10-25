@@ -43,6 +43,7 @@ func handleError(err error) (int, ErrorResponse) {
 	var logicError *exceptions.LogicError
 	var unauthorizedError *exceptions.UnauthorizedError
 	var wrongPasswordError *exceptions.WrongPasswordError
+	var validationError *exceptions.ValidationError
 
 	switch {
 	case errors.As(err, &objectNotFoundError):
@@ -57,6 +58,8 @@ func handleError(err error) (int, ErrorResponse) {
 		return http.StatusUnauthorized, ErrorResponse{"Permission Error", "Unauthorized", err.Error()}
 	case errors.As(err, &wrongPasswordError):
 		return http.StatusUnauthorized, ErrorResponse{"Permission Error", "Wrong Password", err.Error()}
+	case errors.As(err, &validationError):
+		return http.StatusUnprocessableEntity, ErrorResponse{"Validation Error", "Unprocessable Entity", err.Error()}
 	default:
 		return http.StatusInternalServerError, ErrorResponse{"Server Error", "Internal Server Error", err.Error()}
 	}
