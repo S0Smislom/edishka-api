@@ -49,7 +49,7 @@ func (s *ProductService) GetList(limit, offset int, filters *model.ProductFilter
 }
 func (s *ProductService) Create(data *model.CreateProduct) (*model.Product, error) {
 	if err := data.Validate(); err != nil {
-		return nil, err
+		return nil, &exceptions.ValidationError{Msg: err.Error()}
 	}
 	id, err := s.repo.Create(data)
 	if err != nil {

@@ -43,3 +43,14 @@ func InitConfig(configPath string) (*Config, error) {
 	}
 	return config, nil
 }
+
+// Init test config
+func InitTestConfig() (*Config, error) {
+	config := &Config{
+		AccessTokenTTL:  60,
+		RefreshTokenTTL: 60,
+		TokenSecret:     "test",
+		DatabaseURL:     "host=localhost user=custom password=qwerty123 dbname=test port=5454 sslmode=disable",
+	}
+	return config, nil
+}

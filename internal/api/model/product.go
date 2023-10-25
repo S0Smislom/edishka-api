@@ -1,5 +1,7 @@
 package model
 
+import validation "github.com/go-ozzo/ozzo-validation/v4"
+
 type Product struct {
 	Base
 
@@ -38,7 +40,10 @@ type CreateProduct struct {
 }
 
 func (m CreateProduct) Validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Title, validation.Required),
+		validation.Field(&m.Slug, validation.Required),
+	)
 }
 
 type UpdateProduct struct {
