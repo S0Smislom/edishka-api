@@ -5,6 +5,7 @@ import (
 	"food/internal/api/model"
 	"food/internal/api/repository"
 	fileservice "food/internal/file_service"
+	"food/pkg/exceptions"
 	"mime/multipart"
 )
 
@@ -29,6 +30,9 @@ func (s *UserService) GetById(item_id int) (*model.User, error) {
 }
 
 func (s *UserService) Update(id int, data *model.UpdateUser) (*model.User, error) {
+	if err := data.Validate(); err != nil {
+		return nil, &exceptions.ValidationError{Err: err}
+	}
 	if err := s.repo.Update(id, data); err != nil {
 		return nil, err
 	}

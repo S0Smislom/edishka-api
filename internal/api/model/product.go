@@ -1,6 +1,8 @@
 package model
 
-import validation "github.com/go-ozzo/ozzo-validation/v4"
+import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+)
 
 type Product struct {
 	Base
@@ -43,15 +45,17 @@ func (m CreateProduct) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Title, validation.Required),
 		validation.Field(&m.Slug, validation.Required),
+		validation.Field(&m.Calories, validation.Min(0)),
+		validation.Field(&m.Squirrels, validation.Min(0.0)),
+		validation.Field(&m.Fats, validation.Min(0.0)),
+		validation.Field(&m.Carbohydrates, validation.Min(0.0)),
 	)
 }
 
 type UpdateProduct struct {
-	Title       *string `json:"title"`
-	Slug        *string `json:"slug"`
-	Description *string `json:"description"`
-	// Photo       *string `json:"photo"`
-
+	Title         *string  `json:"title"`
+	Slug          *string  `json:"slug"`
+	Description   *string  `json:"description"`
 	Calories      *int     `json:"calories"`
 	Squirrels     *float64 `json:"squirrels"`
 	Fats          *float64 `json:"fats"`
@@ -61,7 +65,14 @@ type UpdateProduct struct {
 }
 
 func (m UpdateProduct) Validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Title, validation.When(m.Title != nil, validation.Required)),
+		validation.Field(&m.Slug, validation.When(m.Slug != nil, validation.Required)),
+		validation.Field(&m.Calories, validation.Min(0)),
+		validation.Field(&m.Squirrels, validation.Min(0.0)),
+		validation.Field(&m.Fats, validation.Min(0.0)),
+		validation.Field(&m.Carbohydrates, validation.Min(0.0)),
+	)
 }
 
 type ProductFilter struct {

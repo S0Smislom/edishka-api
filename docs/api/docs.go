@@ -2426,9 +2426,7 @@ const docTemplate = `{
         "response.ErrorResponse": {
             "type": "object",
             "properties": {
-                "detail": {
-                    "type": "string"
-                },
+                "detail": {},
                 "title": {
                     "type": "string"
                 },

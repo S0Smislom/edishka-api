@@ -13,9 +13,9 @@ type ResponseWriter struct {
 }
 
 type ErrorResponse struct {
-	Type   string `json:"type"`
-	Title  string `json:"title"`
-	Detail string `json:"detail"`
+	Type   string      `json:"type"`
+	Title  string      `json:"title"`
+	Detail interface{} `json:"detail"`
 }
 
 func (w *ResponseWriter) WriteHeader(statusCode int) {
@@ -36,7 +36,7 @@ func ErrorRespond(w http.ResponseWriter, r *http.Request, err error) {
 	Respond(w, r, code, response)
 }
 
-func handleError(err error) (int, ErrorResponse) {
+func handleError(err error) (int, interface{}) {
 	var objectNotFoundError *exceptions.ObjectNotFoundError
 	var userPermissionError *exceptions.UserPermissionError
 	var duplicateError *exceptions.DuplicateError
@@ -59,7 +59,10 @@ func handleError(err error) (int, ErrorResponse) {
 	case errors.As(err, &wrongPasswordError):
 		return http.StatusUnauthorized, ErrorResponse{"Permission Error", "Wrong Password", err.Error()}
 	case errors.As(err, &validationError):
-		return http.StatusUnprocessableEntity, ErrorResponse{"Validation Error", "Unprocessable Entity", err.Error()}
+		// Костыльно, но пойдет
+		var data interface{}
+		json.Unmarshal([]byte(err.Error()), &data)
+		return http.StatusUnprocessableEntity, ErrorResponse{"Validation Error", "Unprocessable Entity", data}
 	default:
 		return http.StatusInternalServerError, ErrorResponse{"Server Error", "Internal Server Error", err.Error()}
 	}

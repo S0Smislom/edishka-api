@@ -18,7 +18,7 @@ func NewStepProductService(repo repository.StepProduct, productRepo repository.P
 
 func (s *StepProductService) Create(currentUserId int, data *model.CreateStepProduct) (*model.StepProduct, error) {
 	if err := data.Validate(); err != nil {
-		return nil, err
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	// Check permissions
 	dbRecipeStep, err := s.recipeStepRepo.GetById(data.RecipeStepId)
@@ -80,6 +80,9 @@ func (s *StepProductService) GetList(limit, offset int, filters *model.StepProdu
 }
 
 func (s *StepProductService) Update(id, currentUserId int, data *model.UpdateStepProduct) (*model.StepProduct, error) {
+	if err := data.Validate(); err != nil {
+		return nil, &exceptions.ValidationError{Err: err}
+	}
 	if _, err := s.getAndCheckPermissions(id, currentUserId); err != nil {
 		return nil, err
 	}

@@ -7,8 +7,6 @@ import (
 	fileservice "food/internal/file_service"
 	"food/pkg/exceptions"
 	"mime/multipart"
-
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 const (
@@ -31,11 +29,7 @@ func NewRecipeGalleryService(repo repository.RecipeGallery, recipeRepo repositor
 
 func (s *RecipeGalleryService) Create(currentUserId int, data *model.CreateRecipeGallery, file multipart.File, fileHeader *multipart.FileHeader) (*model.RecipeGallery, error) {
 	if err := data.Validate(); err != nil {
-		if e, ok := err.(validation.InternalError); ok {
-			// an internal error happened
-			return nil, e.InternalError()
-		}
-		return nil, err
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	dbRecipe, err := s.recipeRepo.GetById(data.RecipeId)
 	if err != nil {
@@ -63,6 +57,9 @@ func (s *RecipeGalleryService) GetById(id int) (*model.RecipeGallery, error) {
 }
 
 func (s *RecipeGalleryService) Update(id, currentUserId int, data *model.UpdateRecipeGallery) (*model.RecipeGallery, error) {
+	if err := data.Validate(); err != nil {
+		return nil, &exceptions.ValidationError{Err: err}
+	}
 	if _, err := s.getAndCheckPermissions(id, currentUserId); err != nil {
 		return nil, err
 	}

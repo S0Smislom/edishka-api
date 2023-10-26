@@ -1,12 +1,12 @@
 package exceptions
 
+import "encoding/json"
+
 type ValidationError struct {
-	Msg string
+	Err error
 }
 
 func (r *ValidationError) Error() string {
-	if r.Msg == "" {
-		r.Msg = "Validation error"
-	}
-	return r.Msg
+	b, _ := json.Marshal(r.Err)
+	return string(b)
 }
