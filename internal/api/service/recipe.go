@@ -37,7 +37,7 @@ func NewRecipeService(
 
 func (s *RecipeService) Create(data *model.CreateRecipe) (*model.Recipe, error) {
 	if err := data.Validate(); err != nil {
-		return nil, err
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	id, err := s.repo.Create(data)
 	if err != nil {
@@ -67,6 +67,9 @@ func (s *RecipeService) GetListPrivate(limit, offset, currentUserId int, filters
 }
 
 func (s *RecipeService) Update(id, currentUserId int, data *model.UpdateRecipe) (*model.Recipe, error) {
+	if err := data.Validate(); err != nil {
+		return nil, &exceptions.ValidationError{Err: err}
+	}
 	if _, err := s.getAndCheckPermissions(id, currentUserId); err != nil {
 		return nil, err
 	}

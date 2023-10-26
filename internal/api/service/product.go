@@ -49,7 +49,7 @@ func (s *ProductService) GetList(limit, offset int, filters *model.ProductFilter
 }
 func (s *ProductService) Create(data *model.CreateProduct) (*model.Product, error) {
 	if err := data.Validate(); err != nil {
-		return nil, &exceptions.ValidationError{Msg: err.Error()}
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	id, err := s.repo.Create(data)
 	if err != nil {
@@ -58,6 +58,9 @@ func (s *ProductService) Create(data *model.CreateProduct) (*model.Product, erro
 	return s.GetById(id)
 }
 func (s *ProductService) Update(id int, currentUserId int, data *model.UpdateProduct) (*model.Product, error) {
+	if err := data.Validate(); err != nil {
+		return nil, &exceptions.ValidationError{Err: err}
+	}
 	_, err := s.getAndCheckPermissions(id, currentUserId)
 	if err != nil {
 		return nil, err

@@ -26,7 +26,7 @@ func NewRecipeStepService(repo repository.RecipeStep, recipeRepo repository.Reci
 func (s *RecipeStepService) Create(currentUserId int, data *model.CreateRecipeStep) (*model.RecipeStep, error) {
 	// Validate data to create
 	if err := data.Validate(); err != nil {
-		return nil, err
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	// Check if recipe exists
 	dbRecipe, err := s.recipeRepo.GetById(data.RecipeId)
@@ -74,6 +74,9 @@ func (s *RecipeStepService) GetList(limit, offset int, filters *model.RecipeStep
 }
 
 func (s *RecipeStepService) Update(id, currentUserId int, data *model.UpdateRecipeStep) (*model.RecipeStep, error) {
+	if err := data.Validate(); err != nil {
+		return nil, &exceptions.ValidationError{Err: err}
+	}
 	if _, err := s.getAndCheckPermissions(id, currentUserId); err != nil {
 		return nil, err
 	}

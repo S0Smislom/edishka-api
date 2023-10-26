@@ -34,7 +34,7 @@ func NewAuthService(accessTokenTTL, refreshTokenTTL int, tokenSecret string, rep
 
 func (s *AuthService) CreateUser(data *model.Login) (*model.LoginResponse, error) {
 	if err := data.Validate(); err != nil {
-		return nil, err
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	data.Code = generateConfirmationCode()
 
@@ -54,7 +54,7 @@ func (s *AuthService) CreateUser(data *model.Login) (*model.LoginResponse, error
 
 func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmResponse, error) {
 	if err := data.Validate(); err != nil {
-		return nil, err
+		return nil, &exceptions.ValidationError{Err: err}
 	}
 	dbUser, err := s.userRepo.GetById(data.ID)
 	if err != nil {

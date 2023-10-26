@@ -435,8 +435,7 @@ definitions:
     type: object
   response.ErrorResponse:
     properties:
-      detail:
-        type: string
+      detail: {}
       title:
         type: string
       type:
