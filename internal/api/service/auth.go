@@ -64,12 +64,12 @@ func (s *AuthService) Login(data *model.LoginConfirm) (*model.LoginConfirmRespon
 		return nil, &exceptions.UnauthorizedError{Msg: "Invalid code"}
 	}
 	// Generate access token
-	accessTokenSigned, err := generateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
+	accessTokenSigned, err := GenerateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
 	if err != nil {
 		return nil, err
 	}
 	// Generate refresh token
-	refreshTokenSigned, err := generateToken(model.RefreshTokenType, dbUser, s.refreshTokenTTL, s.tokenSecret)
+	refreshTokenSigned, err := GenerateToken(model.RefreshTokenType, dbUser, s.refreshTokenTTL, s.tokenSecret)
 	if err != nil {
 		return nil, err
 	}
@@ -107,12 +107,12 @@ func (s *AuthService) Refresh(userId int) (*model.LoginConfirmResponse, error) {
 		return nil, err
 	}
 	// Generate access token
-	accessTokenSigned, err := generateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
+	accessTokenSigned, err := GenerateToken(model.AccessTokenType, dbUser, s.accessTokenTTL, s.tokenSecret)
 	if err != nil {
 		return nil, err
 	}
 	// Generate refresh token
-	refreshTokenSigned, err := generateToken(model.RefreshTokenType, dbUser, s.refreshTokenTTL, s.tokenSecret)
+	refreshTokenSigned, err := GenerateToken(model.RefreshTokenType, dbUser, s.refreshTokenTTL, s.tokenSecret)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func generateConfirmationCode() string {
 // 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 // }
 
-func generateToken(tokenType model.TokenType, dbUser *model.User, ttl int, secret string) (string, error) {
+func GenerateToken(tokenType model.TokenType, dbUser *model.User, ttl int, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &model.TokenClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: getTokenExpiresAt(ttl).Unix(),

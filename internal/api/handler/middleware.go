@@ -14,7 +14,7 @@ const (
 	userCtx             = "userId"
 )
 
-func (h *Handler) authenticateUser(next http.Handler) http.Handler {
+func (h *Handler) AuthenticateUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		header := r.Header.Get(authorizationHeader)
 		claims, err := h.parseAuthHeader(header)
