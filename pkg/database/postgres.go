@@ -36,8 +36,11 @@ func InitTestDB(dbURL string) (*sql.DB, error) {
 func TeardownTestDB(db *sql.DB, tables ...string) error {
 	if len(tables) > 0 {
 		db.Exec(fmt.Sprintf("TRUNCATE %s CASCADE", strings.Join(tables, ", ")))
+		for _, table := range tables {
+			db.Exec(fmt.Sprintf("ALTER SEQUENCE %s_id_seq  RESTART WITH 1;", table))
+		}
 	}
 
-	db.Close()
+	// db.Close()
 	return nil
 }

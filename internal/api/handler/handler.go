@@ -46,7 +46,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	apiRouter := router.PathPrefix("/v1").Subrouter()
 	// Profile
 	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
-	profileRouter.Use(h.authenticateUser)
+	profileRouter.Use(h.AuthenticateUser)
 	profileRouter.HandleFunc("", h.getCurrentProfileHandler()).Methods(http.MethodGet)
 	profileRouter.HandleFunc("", h.updateProfileHandler()).Methods(http.MethodPatch)
 	profileRouter.HandleFunc("/photo", h.uploadProfilePhotoHandler()).Methods(http.MethodPost)
@@ -57,7 +57,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	productRouter.HandleFunc("", h.getProductListHandler()).Methods(http.MethodGet)
 	productRouter.HandleFunc("/{id:[0-9]+}", h.getProductByIdHandler()).Methods(http.MethodGet)
 	protectedProductRouter := productRouter.PathPrefix("").Subrouter()
-	protectedProductRouter.Use(h.authenticateUser)
+	protectedProductRouter.Use(h.AuthenticateUser)
 	protectedProductRouter.HandleFunc("", h.createProductHandler()).Methods(http.MethodPost)
 	protectedProductRouter.HandleFunc("/{id:[0-9]+}", h.deleteProductHandler()).Methods(http.MethodDelete)
 	protectedProductRouter.HandleFunc("/{id:[0-9]+}", h.updateProductHandler()).Methods(http.MethodPatch)
@@ -67,7 +67,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	// Recipe
 	recipeRouter := apiRouter.PathPrefix("/recipe").Subrouter()
 	protectedRecipeRouter := recipeRouter.PathPrefix("").Subrouter()
-	protectedRecipeRouter.Use(h.authenticateUser)
+	protectedRecipeRouter.Use(h.AuthenticateUser)
 	protectedRecipeRouter.HandleFunc("", h.createRecipeHandler()).Methods(http.MethodPost)
 	protectedRecipeRouter.HandleFunc("/private", h.getRecipeListPrivateHandler()).Methods(http.MethodGet)
 	protectedRecipeRouter.HandleFunc("/{id:[0-9]+}/private", h.getRecipeByIdPrivateHandler()).Methods(http.MethodGet)
@@ -79,7 +79,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	// RecipeStep
 	recipeStepRouter := apiRouter.PathPrefix("/recipe-step").Subrouter()
 	protectedRecipeStepRouter := recipeStepRouter.PathPrefix("").Subrouter()
-	protectedRecipeStepRouter.Use(h.authenticateUser)
+	protectedRecipeStepRouter.Use(h.AuthenticateUser)
 	protectedRecipeStepRouter.HandleFunc("", h.createRecipeStepHandler()).Methods(http.MethodPost)
 	protectedRecipeStepRouter.HandleFunc("/{id:[0-9]+}", h.deleteRecipeStepHandler()).Methods(http.MethodDelete)
 	protectedRecipeStepRouter.HandleFunc("/{id:[0-9]+}", h.updateRecipeStepHandler()).Methods(http.MethodPatch)
@@ -91,7 +91,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	// StepProduct
 	stepProductRouter := apiRouter.PathPrefix("/step-product").Subrouter()
 	protectedStepProductRouter := stepProductRouter.PathPrefix("").Subrouter()
-	protectedStepProductRouter.Use(h.authenticateUser)
+	protectedStepProductRouter.Use(h.AuthenticateUser)
 	protectedStepProductRouter.HandleFunc("", h.createStepProductHandler()).Methods(http.MethodPost)
 	protectedStepProductRouter.HandleFunc("/{id:[0-9]+}", h.deleteStepProductHandler()).Methods(http.MethodDelete)
 	protectedStepProductRouter.HandleFunc("/{id:[0-9]+}", h.updateStepProductHandler()).Methods(http.MethodPatch)
@@ -101,7 +101,7 @@ func (h *Handler) InitRoutes() http.Handler {
 	// RecipeGallery
 	recipeGalleryRouter := apiRouter.PathPrefix("/recipe-gallery").Subrouter()
 	protectedRecipeGalleryRouter := recipeGalleryRouter.PathPrefix("").Subrouter()
-	protectedRecipeGalleryRouter.Use(h.authenticateUser)
+	protectedRecipeGalleryRouter.Use(h.AuthenticateUser)
 	protectedRecipeGalleryRouter.HandleFunc("", h.createRecipeGalleryPhotoHandler()).Methods(http.MethodPost)
 	protectedRecipeGalleryRouter.HandleFunc("/{id:[0-9]+}", h.deleteRecipeGalleryPhotoHandler()).Methods(http.MethodDelete)
 	protectedRecipeGalleryRouter.HandleFunc("/{id:[0-9]+}", h.updateRecipeGalleryPhotoHandler()).Methods(http.MethodPatch)
