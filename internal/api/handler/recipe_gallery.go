@@ -15,7 +15,7 @@ import (
 // @Tags RecipeGallery
 // @Security ApiKeyAuth
 // @Description Create RecipeGallery
-// @ID create-recipe-step
+// @ID create-recipe-gallery
 // @Accept  json
 // @Produce  json
 // @Param input formData model.CreateRecipeGallery true "RecipeGallery info"
@@ -54,7 +54,7 @@ func (h *Handler) createRecipeGalleryPhotoHandler() http.HandlerFunc {
 // @Tags RecipeGallery
 // @Security ApiKeyAuth
 // @Description Update RecipeGallery
-// @ID update-recipe-step
+// @ID update-recipe-gallery
 // @Accept  json
 // @Produce  json
 // @Param input body model.UpdateRecipeGallery true "Recipe gallery update data"

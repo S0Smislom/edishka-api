@@ -819,7 +819,7 @@ const docTemplate = `{
                     "RecipeGallery"
                 ],
                 "summary": "Create RecipeGallery",
-                "operationId": "create-recipe-step",
+                "operationId": "create-recipe-gallery",
                 "parameters": [
                     {
                         "type": "integer",
@@ -921,7 +921,7 @@ const docTemplate = `{
                     "RecipeGallery"
                 ],
                 "summary": "Update RecipeGallery",
-                "operationId": "update-recipe-step",
+                "operationId": "update-recipe-gallery",
                 "parameters": [
                     {
                         "description": "Recipe gallery update data",
