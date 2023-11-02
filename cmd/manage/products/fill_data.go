@@ -53,8 +53,12 @@ func main() {
 			index := rand.Intn(1001)
 			product.Title = fmt.Sprintf("%s-%d", product.Title, index)
 			product.Slug = fmt.Sprintf("%s-%d", product.Slug, index)
-			id, _ := repo.Product().Create(product)
-			log.Printf("Created Product(%d)\n", id)
+			id, err := repo.Product().Create(product)
+			if err != nil {
+				log.Printf("Error: %s", err)
+			} else {
+				log.Printf("Created Product(%d)\n", id)
+			}
 		}
 	}
 
