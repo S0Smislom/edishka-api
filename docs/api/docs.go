@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/login": {
+        "/v1/login": {
             "post": {
                 "description": "create account",
                 "consumes": [
@@ -74,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/login/confirm": {
+        "/v1/login/confirm": {
             "post": {
                 "description": "Generate access/refresh tokens",
                 "consumes": [
@@ -133,7 +133,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/login/refresh": {
+        "/v1/login/refresh": {
             "post": {
                 "security": [
                     {

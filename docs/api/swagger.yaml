@@ -448,7 +448,7 @@ info:
   title: Food API
   version: "1.0"
 paths:
-  /login:
+  /v1/login:
     post:
       consumes:
       - application/json
@@ -487,7 +487,7 @@ paths:
       summary: SignUp
       tags:
       - Auth
-  /login/confirm:
+  /v1/login/confirm:
     post:
       consumes:
       - application/json
@@ -526,7 +526,7 @@ paths:
       summary: Confirm Code
       tags:
       - Auth
-  /login/refresh:
+  /v1/login/refresh:
     post:
       description: Generate new access/refresh tokens
       operationId: refresh-tokens

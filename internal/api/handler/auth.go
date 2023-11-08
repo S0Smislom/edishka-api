@@ -19,7 +19,7 @@ import (
 // @Failure 400,404 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Failure default {object} response.ErrorResponse
-// @Router /login [post]
+// @Router /v1/login [post]
 func (h *Handler) logIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &model.Login{}
@@ -47,7 +47,7 @@ func (h *Handler) logIn() http.HandlerFunc {
 // @Failure 400,404 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Failure default {object} response.ErrorResponse
-// @Router /login/confirm [post]
+// @Router /v1/login/confirm [post]
 func (h *Handler) confirmCode() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &model.LoginConfirm{}
@@ -72,7 +72,7 @@ func (h *Handler) confirmCode() http.HandlerFunc {
 // @Produce json
 // @Success 200 {object} model.LoginConfirmResponse
 // @Failure default {object} response.ErrorResponse
-// @Router /login/refresh [post]
+// @Router /v1/login/refresh [post]
 func (h *Handler) refreshTokenHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		header := r.Header.Get(authorizationHeader)

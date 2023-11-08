@@ -9,7 +9,7 @@
     "host": "localhost:8091",
     "basePath": "/",
     "paths": {
-        "/login": {
+        "/v1/login": {
             "post": {
                 "description": "create account",
                 "consumes": [
@@ -68,7 +68,7 @@
                 }
             }
         },
-        "/login/confirm": {
+        "/v1/login/confirm": {
             "post": {
                 "description": "Generate access/refresh tokens",
                 "consumes": [
@@ -127,7 +127,7 @@
                 }
             }
         },
-        "/login/refresh": {
+        "/v1/login/refresh": {
             "post": {
                 "security": [
                     {

@@ -29,7 +29,6 @@ func NewHandler(config *config.Config, services *service.Service) *Handler {
 func (h *Handler) InitRoutes() http.Handler {
 	router := mux.NewRouter()
 	router.Use(middleware.LogRequest)
-	router.Use(middleware.EnableCors)
 	router.PathPrefix("/docs/").Handler(httpSwagger.Handler(
 		httpSwagger.URL(fmt.Sprintf("%s/docs/api/doc.json", h.config.BaseAPIURL)), //The url pointing to API definition
 		httpSwagger.DeepLinking(true),
@@ -37,13 +36,12 @@ func (h *Handler) InitRoutes() http.Handler {
 		httpSwagger.DomID("swagger-ui"),
 	)).Methods(http.MethodGet)
 
-	// Auth
-	router.HandleFunc("/login", h.logIn()).Methods(http.MethodPost)
-	router.HandleFunc("/login/confirm", h.confirmCode()).Methods(http.MethodPost)
-	router.HandleFunc("/login/refresh", h.refreshTokenHandler()).Methods(http.MethodPost)
-
 	// V1
 	apiRouter := router.PathPrefix("/v1").Subrouter()
+	// Auth
+	apiRouter.HandleFunc("/login", h.logIn()).Methods(http.MethodPost)
+	apiRouter.HandleFunc("/login/confirm", h.confirmCode()).Methods(http.MethodPost)
+	apiRouter.HandleFunc("/login/refresh", h.refreshTokenHandler()).Methods(http.MethodPost)
 	// Profile
 	profileRouter := apiRouter.PathPrefix("/profile").Subrouter()
 	profileRouter.Use(h.AuthenticateUser)
