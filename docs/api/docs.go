@@ -1856,9 +1856,6 @@ const docTemplate = `{
                 "ordering": {
                     "type": "integer"
                 },
-                "photo": {
-                    "type": "string"
-                },
                 "recipeId": {
                     "type": "integer"
                 },

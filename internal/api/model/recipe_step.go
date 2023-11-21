@@ -16,7 +16,6 @@ type RecipeStep struct {
 type CreateRecipeStep struct {
 	Title       string  `json:"title" binding:"required"`
 	Description *string `json:"description"`
-	Photo       *string `json:"photo"`
 
 	Ordering int `json:"ordering" binding:"required"`
 	RecipeId int `json:"recipeId" binding:"required"`
