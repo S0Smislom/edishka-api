@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"food/internal/api/handler"
-	"food/internal/api/repository/postgres"
+	"food/internal/api/repository/gormrepo"
 	"food/internal/api/server"
 	"food/internal/api/service"
 	"food/internal/file_service/minio"
@@ -17,6 +17,8 @@ import (
 	"syscall"
 
 	"github.com/sirupsen/logrus"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
@@ -49,6 +51,12 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+	gormDB, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	}), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	minioClient, err := objectstorage.InitMinio(
 		config.MinioEndpoint,
@@ -56,9 +64,13 @@ func main() {
 		config.MinioSecretKey,
 		config.MinioUseSSL,
 	)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fileService := minio.NewFileServcie(minioClient)
 
-	repo := postgres.NewRepository(db)
+	// repo := postgres.NewRepository(db)
+	repo := gormrepo.NewRepository(gormDB)
 	service := service.NewService(repo, fileService, config)
 	handler := handler.NewHandler(config, service)
 	srv := new(server.Server)

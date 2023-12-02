@@ -20,6 +20,10 @@ type Product struct {
 	CreatedById     int     `json:"-"`
 }
 
+func (r *Product) TableName() string {
+	return "product"
+}
+
 type ProductList struct {
 	Total  int        `json:"total"`
 	Limit  int        `json:"limit"`
@@ -39,6 +43,7 @@ type CreateProduct struct {
 	Carbohydrates float64 `json:"carbohydrates" binding:"required"`
 
 	CreatedById int `json:"-"`
+	Id          int `json:"-"`
 }
 
 func (m CreateProduct) Validate() error {

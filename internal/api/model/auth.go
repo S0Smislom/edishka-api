@@ -15,6 +15,7 @@ const (
 type Login struct {
 	Phone string `json:"phone" binding:"required"`
 	Code  string `json:"-"`
+	Id    int    `json:"-"`
 }
 
 func (l Login) Validate() error {

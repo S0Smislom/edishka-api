@@ -35,9 +35,14 @@ type Recipe struct {
 	Gallery  []*RecipeGalleryMinimal `json:"gallery"`
 }
 
+func (r *Recipe) TableName() string {
+	return "recipe"
+}
+
 type RecipeProduct struct {
 	Product
-	Amount int `json:"amount"`
+	Amount   int `json:"amount"`
+	RecipeId int `json:"-"`
 }
 
 type RecipeGalleryMinimal struct {
@@ -46,9 +51,15 @@ type RecipeGalleryMinimal struct {
 	Ordering  int    `json:"ordering"`
 	Published bool   `json:"published"`
 	Photo     string `json:"photo"`
+	RecipeId  int    `json:"-"`
+}
+
+func (r *RecipeGalleryMinimal) TableName() string {
+	return "recipe_gallery"
 }
 
 type CreateRecipe struct {
+	Id          int     `json:"-"`
 	Title       string  `json:"title" binding:"required"`
 	Slug        string  `json:"slug" binding:"required"`
 	Description *string `json:"description"`

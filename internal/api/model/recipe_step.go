@@ -13,6 +13,10 @@ type RecipeStep struct {
 	RecipeId int `json:"recipeId"`
 }
 
+func (r *RecipeStep) TableName() string {
+	return "recipe_step"
+}
+
 type CreateRecipeStep struct {
 	Title       string  `json:"title" binding:"required"`
 	Description *string `json:"description"`
@@ -21,6 +25,7 @@ type CreateRecipeStep struct {
 	RecipeId int `json:"recipeId" binding:"required"`
 
 	CreatedById int `json:"-"`
+	Id          int `json:"-"`
 }
 
 func (m CreateRecipeStep) Validate() error {

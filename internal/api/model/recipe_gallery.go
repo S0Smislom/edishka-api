@@ -14,6 +14,10 @@ type RecipeGallery struct {
 	RecipeId  int    `json:"recipe_id"`
 }
 
+func (r *RecipeGallery) TableName() string {
+	return "recipe_gallery"
+}
+
 type RecipeGalleryList struct {
 	Total  int              `json:"total"`
 	Limit  int              `json:"limit"`
@@ -28,6 +32,7 @@ type CreateRecipeGallery struct {
 	Photo     string `json:"-"`
 
 	CreatedById int `json:"-" schema:"-"`
+	Id          int `json:"-" schema:"-"`
 }
 
 func (m *CreateRecipeGallery) Validate() error {

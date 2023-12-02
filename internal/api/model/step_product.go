@@ -11,12 +11,17 @@ type StepProduct struct {
 	Amount       float64  `json:"amount" binding:"required"`
 }
 
+func (m *StepProduct) TableNmae() string {
+	return "step_product"
+}
+
 type CreateStepProduct struct {
 	RecipeStepId int     `json:"recipe_step_id" binding:"required"`
 	ProductId    int     `json:"product_id" binding:"required"`
 	Amount       float64 `json:"amount" binding:"required"`
 
 	CreatedById int `json:"-"`
+	Id          int `json:"-"`
 }
 
 func (m *CreateStepProduct) Validate() error {
