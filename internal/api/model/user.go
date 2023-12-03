@@ -12,6 +12,10 @@ type User struct {
 	Code      *string `json:"-"`
 }
 
+func (m *User) TableName() string {
+	return "\"user\""
+}
+
 type UpdateUser struct {
 	FirstName *string `json:"first_name"`
 	LastName  *string `json:"last_name"`
