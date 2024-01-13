@@ -71,6 +71,24 @@ type ShoppingItem interface {
 	Delete(id int) error
 }
 
+type Diet interface {
+	GetById(id int) (*model.Diet, error)
+	GetList(limit, offset int, filters *model.DietFilter) ([]*model.Diet, error)
+	Create(data *model.CreateDiet) (int, error)
+	Count(filters *model.DietFilter) (int, error)
+	Delete(id int) error
+	Update(id int, data *model.UpdateDiet) error
+}
+
+type DietItem interface {
+	GetById(id int) (*model.DietItem, error)
+	GetList(limit, offset int, filters *model.DietItemFilter) ([]*model.DietItem, error)
+	Create(data *model.CreateDietItem) (int, error)
+	Count(filters *model.DietItemFilter) (int, error)
+	Delete(id int) error
+	Update(id int, data *model.UpdateDietItem) error
+}
+
 type Repository interface {
 	Auth() Auth
 	User() User
@@ -80,4 +98,6 @@ type Repository interface {
 	RecipeGallery() RecipeGallery
 	RecipeProduct() RecipeProduct
 	ShoppingItem() ShoppingItem
+	DietItem() DietItem
+	Diet() Diet
 }

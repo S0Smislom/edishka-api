@@ -1,5 +1,37 @@
 basePath: /
 definitions:
+  model.CreateDiet:
+    properties:
+      description:
+        type: string
+      diet_item_ids:
+        items:
+          type: integer
+        type: array
+      published:
+        type: boolean
+      slug:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - slug
+    - title
+    type: object
+  model.CreateDietItem:
+    properties:
+      amount:
+        type: number
+      diet_id:
+        type: integer
+      product_id:
+        type: integer
+      recipe_id:
+        type: integer
+    required:
+    - amount
+    type: object
   model.CreateProduct:
     properties:
       calories:
@@ -82,6 +114,64 @@ definitions:
         type: number
       title:
         type: string
+    type: object
+  model.Diet:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/model.DietItem'
+        type: array
+      published:
+        type: boolean
+      slug:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.DietItem:
+    properties:
+      amount:
+        type: number
+      id:
+        type: integer
+      product_id:
+        type: integer
+      recipe_id:
+        type: integer
+    type: object
+  model.DietItemList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.DietItem'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  model.DietList:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Diet'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
     type: object
   model.DifficultyLevel:
     enum:
@@ -378,6 +468,24 @@ definitions:
       total:
         type: integer
     type: object
+  model.UpdateDiet:
+    properties:
+      description:
+        type: string
+      published:
+        type: boolean
+      slug:
+        type: string
+      title:
+        type: string
+    type: object
+  model.UpdateDietItem:
+    properties:
+      amount:
+        type: number
+      diet_id:
+        type: integer
+    type: object
   model.UpdateProduct:
     properties:
       calories:
@@ -482,6 +590,315 @@ info:
   title: Food API
   version: "1.0"
 paths:
+  /v1/diet:
+    post:
+      consumes:
+      - application/json
+      description: Create diet
+      operationId: create-diet
+      parameters:
+      - description: diet info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateDiet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Diet'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create diet item
+      tags:
+      - Diet
+  /v1/diet-item:
+    post:
+      consumes:
+      - application/json
+      description: Create diet item
+      operationId: create-diet-item
+      parameters:
+      - description: diet info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateDietItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.DietItem'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create diet item
+      tags:
+      - DietItem
+  /v1/diet-item/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete diet item
+      operationId: delete-diet-item
+      parameters:
+      - description: Diet item item id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.DietItem'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete diet item
+      tags:
+      - DietItem
+    patch:
+      consumes:
+      - application/json
+      description: Update diet item
+      operationId: update-diet-item
+      parameters:
+      - description: Diet item update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateDietItem'
+      - description: Diet item id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.DietItem'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update diet item
+      tags:
+      - DietItem
+  /v1/diet-item/{id}/private:
+    get:
+      consumes:
+      - application/json
+      description: Get diet item by id
+      operationId: get-diet-item
+      parameters:
+      - description: Diet item id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.DietItem'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get diet item by id
+      tags:
+      - DietItem
+  /v1/diet-item/private:
+    get:
+      consumes:
+      - application/json
+      description: Get diet item list
+      operationId: get-diet-item-list
+      parameters:
+      - default: 25
+        description: limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: offset
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        name: diet_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.DietItemList'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get diet item list
+      tags:
+      - DietItem
+  /v1/diet/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete diet item
+      operationId: delete-diet
+      parameters:
+      - description: Diet item id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Diet'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete diet
+      tags:
+      - Diet
+    patch:
+      consumes:
+      - application/json
+      description: Update diet
+      operationId: update-diet
+      parameters:
+      - description: Diet update data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateDiet'
+      - description: Diet item id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Diet'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update diet
+      tags:
+      - Diet
+  /v1/diet/{id}/private:
+    get:
+      consumes:
+      - application/json
+      description: Get diet by id
+      operationId: get-diet
+      parameters:
+      - description: Diet id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Diet'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get diet by id
+      tags:
+      - Diet
+  /v1/diet/private:
+    get:
+      consumes:
+      - application/json
+      description: Get diet list
+      operationId: get-diet-list
+      parameters:
+      - default: 25
+        description: limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: offset
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.DietList'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get diet list
+      tags:
+      - Diet
   /v1/login:
     post:
       consumes:

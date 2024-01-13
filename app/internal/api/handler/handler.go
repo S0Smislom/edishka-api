@@ -112,5 +112,25 @@ func (h *Handler) InitRoutes() http.Handler {
 	shoppingListRouter.HandleFunc("/{id:[0-9]+}", h.deleteShoppingItemHandler()).Methods(http.MethodDelete)
 	shoppingListRouter.HandleFunc("/{id:[0-9]+}", h.updateShoppingItemHandler()).Methods(http.MethodPatch)
 
+	// Diet
+	dietRouter := apiRouter.PathPrefix("/diet").Subrouter()
+	dietProtectedRouter := dietRouter.PathPrefix("").Subrouter()
+	dietProtectedRouter.Use(h.AuthenticateUser)
+	dietProtectedRouter.HandleFunc("", h.createDietHandler()).Methods(http.MethodPost)
+	dietProtectedRouter.HandleFunc("/private", h.getDietListPrivateHandler()).Methods(http.MethodGet)
+	dietProtectedRouter.HandleFunc("/{id:[0-9]+}/private", h.getDietByIdPrivateHandler()).Methods(http.MethodGet)
+	dietProtectedRouter.HandleFunc("/{id:[0-9]+}", h.deleteDietHandler()).Methods(http.MethodDelete)
+	dietProtectedRouter.HandleFunc("/{id:[0-9]+}", h.updateDietHandler()).Methods(http.MethodPatch)
+
+	// DietItem
+	dietItemRouter := apiRouter.PathPrefix("/diet-item").Subrouter()
+	dietItemProtectedRouter := dietItemRouter.PathPrefix("").Subrouter()
+	dietItemProtectedRouter.Use(h.AuthenticateUser)
+	dietItemProtectedRouter.HandleFunc("", h.createDietItemHandler()).Methods(http.MethodPost)
+	dietItemProtectedRouter.HandleFunc("/private", h.getDietItemListPrivateHandler()).Methods(http.MethodGet)
+	dietItemProtectedRouter.HandleFunc("/{id:[0-9]+}/private", h.getDietItemByIdPrivateHandler()).Methods(http.MethodGet)
+	dietItemProtectedRouter.HandleFunc("/{id:[0-9]+}", h.deleteDietItemHandler()).Methods(http.MethodDelete)
+	dietItemProtectedRouter.HandleFunc("/{id:[0-9]+}", h.updateDietItemHandler()).Methods(http.MethodPatch)
+
 	return router
 }

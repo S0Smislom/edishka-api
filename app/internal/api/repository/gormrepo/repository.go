@@ -16,6 +16,8 @@ type Repository struct {
 	*RecipeProductRepository
 	*RecipeGalleryRepository
 	*ShoppingItemRepository
+	*DietRepository
+	*DietItemRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -77,4 +79,18 @@ func (r *Repository) ShoppingItem() repository.ShoppingItem {
 		r.ShoppingItemRepository = NewShoppingItemRepository(r.db)
 	}
 	return r.ShoppingItemRepository
+}
+
+func (r *Repository) Diet() repository.Diet {
+	if r.DietRepository == nil {
+		r.DietRepository = NewDietRepository(r.db)
+	}
+	return r.DietRepository
+}
+
+func (r *Repository) DietItem() repository.DietItem {
+	if r.DietItemRepository == nil {
+		r.DietItemRepository = NewDietItemRepository(r.db)
+	}
+	return r.DietItemRepository
 }

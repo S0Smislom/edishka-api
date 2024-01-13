@@ -4,7 +4,6 @@ import (
 	"food/internal/api/model"
 	"food/internal/api/repository"
 	"food/pkg/exceptions"
-	"log"
 )
 
 type ShoppingItemService struct {
@@ -50,7 +49,6 @@ func (s *ShoppingItemService) GetList(currentUserId, limit, offset int, filters 
 }
 
 func (s *ShoppingItemService) Create(data *model.CreateShoppingItem) (*model.ShoppingItem, error) {
-	log.Print(data)
 	if err := data.Validate(); err != nil {
 		return nil, &exceptions.ValidationError{Err: err}
 	}

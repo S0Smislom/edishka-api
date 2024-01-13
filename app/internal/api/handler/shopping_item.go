@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"food/internal/api/model"
 	"food/pkg/response"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -36,8 +35,6 @@ func (h *Handler) createShoppingItemHandler() http.HandlerFunc {
 			response.ErrorRespond(w, r, err)
 			return
 		}
-		log.Print(product)
-
 		response.Respond(w, r, http.StatusOK, product)
 	}
 }
@@ -103,7 +100,6 @@ func (h *Handler) getShoppingListHandler() http.HandlerFunc {
 			response.ErrorRespond(w, r, err)
 			return
 		}
-		log.Print(shoppingList)
 		response.Respond(w, r, http.StatusOK, shoppingList)
 	}
 }

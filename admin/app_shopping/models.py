@@ -4,7 +4,6 @@ from app_auth.models import CustomUser
 from app_core.models import TimestampModel
 
 
-
 class ShoppingItem(TimestampModel):
     title = models.CharField(max_length=200)
     amount = models.FloatField()
