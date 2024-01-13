@@ -74,6 +74,22 @@ type ShoppingList interface {
 	Delete(currentUserId, id int) (*model.ShoppingItem, error)
 }
 
+type Diet interface {
+	GetByIdPrivate(currentUserId, id int) (*model.Diet, error)
+	GetListPrivate(currentUserId, limit, offset int, filters *model.DietFilter) (*model.DietList, error)
+	Create(currentUserId int, data *model.CreateDiet) (*model.Diet, error)
+	Update(currentUserId, id int, data *model.UpdateDiet) (*model.Diet, error)
+	Delete(currentUserId, id int) (*model.Diet, error)
+}
+
+type DietItem interface {
+	GetByIdPrivate(currentUserId, id int) (*model.DietItem, error)
+	GetListPrivate(currentUserId, limit, offset int, filters *model.DietItemFilter) (*model.DietItemList, error)
+	Create(currentUserId int, data *model.CreateDietItem) (*model.DietItem, error)
+	Update(currentUserId, id int, data *model.UpdateDietItem) (*model.DietItem, error)
+	Delete(currentUserId, id int) (*model.DietItem, error)
+}
+
 type Service struct {
 	Auth
 	User
@@ -83,6 +99,8 @@ type Service struct {
 	RecipeProduct
 	RecipeGallery
 	ShoppingList
+	Diet
+	DietItem
 }
 
 func NewService(repos repository.Repository, fileService fileservice.FileService, config *config.Config) *Service {
@@ -95,5 +113,7 @@ func NewService(repos repository.Repository, fileService fileservice.FileService
 		RecipeProduct: NewRecipeProductService(repos.RecipeProduct(), repos.Product(), repos.Recipe()),
 		RecipeGallery: NewRecipeGalleryService(repos.RecipeGallery(), repos.Recipe(), fileService),
 		ShoppingList:  NewShoppingItemService(repos.ShoppingItem()),
+		Diet:          NewDietService(repos),
+		DietItem:      NewDietItemService(repos),
 	}
 }
