@@ -15,7 +15,7 @@ const (
 )
 
 type Login struct {
-	Phone string `json:"phone" binding:"required"`
+	Phone string `json:"phone" binding:"required" example:"+79999999999"`
 
 	Code        string    `json:"-"`
 	Id          int       `json:"-"`
@@ -37,8 +37,8 @@ type LoginResponse struct {
 }
 
 type LoginConfirm struct {
-	ID   int    `json:"id" binding:"required"`
-	Code string `json:"code" binding:"required"`
+	ID   int    `json:"id" binding:"required" example:"1"`
+	Code string `json:"code" binding:"required" example:"1111"`
 }
 
 func (l LoginConfirm) Validate() error {

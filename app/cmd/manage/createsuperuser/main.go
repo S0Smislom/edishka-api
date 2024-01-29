@@ -9,6 +9,7 @@ import (
 	"food/internal/file_service/minio"
 	"food/pkg/config"
 	"food/pkg/database"
+	miniofileprovider "food/pkg/file_provider/minio_file_provider"
 	objectstorage "food/pkg/object_storage"
 	"log"
 )
@@ -37,7 +38,8 @@ func main() {
 		log.Fatal(err)
 	}
 	repo := postgres.NewRepository(db)
-	fileService := minio.NewFileServcie(minioClient)
+	fileProvider := miniofileprovider.NewMinioFileProvider(minioClient)
+	fileService := minio.NewFileServcie(fileProvider)
 	service := service.NewService(config, repo, fileService)
 
 	loginData := &model.CreateUser{

@@ -1,58 +1,50 @@
 package minio
 
 import (
-	"context"
 	"fmt"
 	fileservice "food/internal/file_service"
+	fileconverter "food/pkg/file_converter"
+	fileprovider "food/pkg/file_provider"
 	"mime/multipart"
 	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
-	"github.com/minio/minio-go/v7"
-)
-
-const (
-	bucketName = "public"
 )
 
 type FileService struct {
-	minioClient *minio.Client
+	fileProvider fileprovider.FileProvider
 }
 
-func NewFileServcie(minioClient *minio.Client) fileservice.FileService {
-	return &FileService{minioClient: minioClient}
+func NewFileServcie(fileProvider fileprovider.FileProvider) fileservice.FileService {
+	return &FileService{fileProvider: fileProvider}
 }
 
 func (s *FileService) UploadFile(
 	category string, file multipart.File, fileHeader *multipart.FileHeader,
 ) (string, error) {
-	ctx := context.Background()
+	// Convert file to JPEG
+	fileConverter := &fileconverter.ImageConverter{}
+	file, fileHeader, err := fileConverter.ConvertToJpg(file, fileHeader)
+	if err != nil {
+		return "", err
+	}
+
 	// Get slugified fileName with extension
 	objectName := s.slugifyFileName(fileHeader.Filename)
 	// Generate filePath
 	filePath := fmt.Sprintf("%s/%s/%s", category, time.Now().Format("2006/01/02"), objectName)
 	// Update fileName if it already exists
-	filePath, err := s.checkFile(bucketName, filePath)
+	filePath, err = s.checkFile(filePath)
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(fileHeader.Header)
 	// Upload file to bucket
-	_, err = s.minioClient.PutObject(ctx, bucketName, filePath, file, fileHeader.Size, minio.PutObjectOptions{ContentType: fileHeader.Header.Get("Content-Type")})
-	if err != nil {
-		return "", err
-	}
-	// Generate full filePath with bucketName
-	// return fmt.Sprintf("/%s%s", bucketName, filePath), nil
-	return filePath, nil
+	return s.fileProvider.PutObject(filePath, file, fileHeader)
 }
 
 func (s *FileService) DeleteFile(filePath string) error {
-	if err := s.minioClient.RemoveObject(context.Background(), bucketName, filePath, minio.RemoveObjectOptions{}); err != nil {
-		return err
-	}
-	return nil
+	return s.fileProvider.RemoveObject(filePath)
 }
 
 func (s *FileService) slugifyFileName(fileName string) string {
@@ -70,7 +62,6 @@ func (s *FileService) spliteFileName(fileName string) (string, string) {
 }
 
 func (s *FileService) checkFile(
-	bucketName string,
 	filePath string,
 ) (string, error) {
 	count := 0
@@ -81,14 +72,13 @@ func (s *FileService) checkFile(
 			postfix = fmt.Sprintf("-%d", count)
 		}
 		tempName := fmt.Sprintf("%s%s.%s", fileName, postfix, fileExtension)
-		_, err := s.minioClient.StatObject(context.Background(), bucketName, tempName, minio.StatObjectOptions{})
+		exists, err := s.fileProvider.CheckFile(tempName)
 		if err != nil {
-			if err.Error() == "The specified key does not exist." {
-				return tempName, nil
-			}
-			return "", err
+			return "", nil
 		}
-
+		if !exists {
+			return tempName, nil
+		}
 		count++
 	}
 	return "", nil

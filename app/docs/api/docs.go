@@ -2734,7 +2734,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "+79999999999"
                 }
             }
         },
@@ -2746,10 +2747,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1111"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -3349,7 +3352,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8091",
+	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Food API",
