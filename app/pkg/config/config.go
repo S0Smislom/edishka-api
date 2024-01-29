@@ -8,6 +8,7 @@ import (
 
 // Config ...
 type Config struct {
+	BaseHost        string `toml:"base_host"`
 	BaseAPIURL      string `toml:"base_api_url"`
 	BaseAdminAPIURL string `toml:"base_admin_api_url"`
 

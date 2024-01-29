@@ -10,11 +10,14 @@ import (
 	"food/internal/file_service/minio"
 	"food/pkg/config"
 	"food/pkg/database"
+	miniofileprovider "food/pkg/file_provider/minio_file_provider"
 	objectstorage "food/pkg/object_storage"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	docs "food/docs/api"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -33,7 +36,6 @@ func init() {
 // @version 1.0
 // @description API Server for FOOD Application
 
-// @host localhost:8091
 // @BasePath /
 
 // @securityDefinitions.apikey ApiKeyAuth
@@ -67,7 +69,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fileService := minio.NewFileServcie(minioClient)
+	fileProvider := miniofileprovider.NewMinioFileProvider(minioClient)
+	fileService := minio.NewFileServcie(fileProvider)
+
+	docs.SwaggerInfo.Host = config.BaseHost
 
 	// repo := postgres.NewRepository(db)
 	repo := gormrepo.NewRepository(gormDB)

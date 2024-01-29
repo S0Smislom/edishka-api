@@ -1,4 +1,5 @@
 base_api_url = "http://localhost:8091"
+base_host = "localhost:8091"
 base_admin_api_url = "http://localhost:8092"
 bind_addr = "0.0.0.0:8091"
 admin_addr = "0.0.0.0:8092"

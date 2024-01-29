@@ -6,7 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8091",
     "basePath": "/",
     "paths": {
         "/v1/diet": {
@@ -2728,7 +2727,8 @@
             ],
             "properties": {
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "+79999999999"
                 }
             }
         },
@@ -2740,10 +2740,12 @@
             ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1111"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },

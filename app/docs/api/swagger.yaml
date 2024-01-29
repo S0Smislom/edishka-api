@@ -186,6 +186,7 @@ definitions:
   model.Login:
     properties:
       phone:
+        example: "+79999999999"
         type: string
     required:
     - phone
@@ -193,8 +194,10 @@ definitions:
   model.LoginConfirm:
     properties:
       code:
+        example: "1111"
         type: string
       id:
+        example: 1
         type: integer
     required:
     - code
@@ -583,7 +586,6 @@ definitions:
       type:
         type: string
     type: object
-host: localhost:8091
 info:
   contact: {}
   description: API Server for FOOD Application
