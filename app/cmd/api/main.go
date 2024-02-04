@@ -29,7 +29,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&configPath, "config-path", "config/dev.toml", "path to config file")
+	flag.StringVar(&configPath, "config-path", ".env", "path to config file")
 }
 
 // @title Food API
@@ -44,7 +44,7 @@ func init() {
 func main() {
 	flag.Parse()
 	logrus.SetFormatter(new(logrus.JSONFormatter))
-	config, err := config.InitConfig(configPath)
+	config, err := config.InitEnvConfig(configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
