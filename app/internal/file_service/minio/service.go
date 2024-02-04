@@ -4,8 +4,11 @@ import (
 	"fmt"
 	fileservice "food/internal/file_service"
 	fileconverter "food/pkg/file_converter"
+	fileprocessor "food/pkg/file_processor"
 	fileprovider "food/pkg/file_provider"
+	"food/pkg/utils"
 	"mime/multipart"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -13,23 +16,23 @@ import (
 )
 
 type FileService struct {
-	fileProvider fileprovider.FileProvider
+	fileProvider  fileprovider.FileProvider
+	fileConverter *fileconverter.ImageConverter
+	fileProcessor *fileprocessor.ImageProcessor
 }
 
 func NewFileServcie(fileProvider fileprovider.FileProvider) fileservice.FileService {
-	return &FileService{fileProvider: fileProvider}
+	return &FileService{fileProvider: fileProvider, fileConverter: &fileconverter.ImageConverter{}, fileProcessor: fileprocessor.NewImageProcessor(fileProvider)}
 }
 
 func (s *FileService) UploadFile(
 	category string, file multipart.File, fileHeader *multipart.FileHeader,
 ) (string, error) {
 	// Convert file to JPEG
-	fileConverter := &fileconverter.ImageConverter{}
-	file, fileHeader, err := fileConverter.ConvertToJpg(file, fileHeader)
+	file, fileHeader, err := s.fileConverter.ConvertToJpg(file, fileHeader)
 	if err != nil {
 		return "", err
 	}
-
 	// Get slugified fileName with extension
 	objectName := s.slugifyFileName(fileHeader.Filename)
 	// Generate filePath
@@ -40,7 +43,15 @@ func (s *FileService) UploadFile(
 		return "", err
 	}
 	// Upload file to bucket
-	return s.fileProvider.PutObject(filePath, file, fileHeader)
+	newFilePath, err := s.fileProvider.PutObject(filePath, file, fileHeader)
+	if err != nil {
+		return "", err
+	}
+	// Process image
+	if utils.ContainsString([]string{".webp", ".png", ".jpg", ".jpeg"}, filepath.Ext(fileHeader.Filename)) {
+		s.fileProcessor.ProcessFile(filePath, file, fileHeader)
+	}
+	return newFilePath, nil
 }
 
 func (s *FileService) DeleteFile(filePath string) error {
