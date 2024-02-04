@@ -12,22 +12,18 @@ require (
 	github.com/gosimple/slug v1.13.1
 	github.com/lib/pq v1.10.9
 	github.com/minio/minio-go/v7 v7.0.63
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/swaggo/swag v1.16.2
+	golang.org/x/image v0.15.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.5
 )
 
 require (
-	github.com/kolesa-team/go-webp v1.0.4 // indirect
-	golang.org/x/image v0.15.0 // indirect
-)
-
-require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/chai2010/webp v1.1.1
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
